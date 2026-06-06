@@ -847,7 +847,8 @@ function openSheet(t) {
   document.getElementById('sh-stars').textContent = stars(rData.avg);
   document.getElementById('sh-rating').textContent = rData.avg.toFixed(1);
   document.getElementById('sh-rcnt').textContent = `(리뷰 ${rData.cnt}개)`;
-  document.getElementById('rev-tab-cnt').textContent = rData.cnt>0?`(${rData.cnt})`:'';
+  const visibleRevCnt = (reviewsDB[String(t.id)]||[]).length;
+  document.getElementById('rev-tab-cnt').textContent = visibleRevCnt>0?`(${visibleRevCnt})`:'';
 
   // clean bar
   const fill=document.getElementById('cl-fill');
@@ -976,7 +977,8 @@ function submitReview() {
 
   // update tab count
   const rData=computeRating(sel);
-  document.getElementById('rev-tab-cnt').textContent=`(${rData.cnt})`;
+  const newVisibleCnt=(reviewsDB[String(sel.id)]||[]).length;
+  document.getElementById('rev-tab-cnt').textContent=`(${newVisibleCnt})`;
   document.getElementById('sh-stars').textContent=stars(rData.avg);
   document.getElementById('sh-rating').textContent=rData.avg.toFixed(1);
   document.getElementById('sh-rcnt').textContent=`(리뷰 ${rData.cnt}개)`;
