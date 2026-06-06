@@ -411,6 +411,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Noto Sans KR','Segoe UI',sans
         <button class="sh-btn sh-sec" onclick="saveToilet()">💾 저장</button>
         <button class="sh-btn sh-pri" onclick="getRoute()">🗺️ 길 안내</button>
       </div>
+      <button id="sh-del-btn" style="display:none;width:100%;margin-top:8px;background:#ffe5e5;
+        color:#d32f2f;border:none;border-radius:14px;padding:13px;font-weight:700;font-size:14px;
+        cursor:pointer;" onclick="deleteDynToilet()">🗑️ 내가 등록한 화장실 삭제</button>
     </div>
 
     <!-- REVIEW PANE -->
@@ -484,6 +487,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Noto Sans KR','Segoe UI',sans
     <div class="m-field">
       <label>화장실 이름</label>
       <input class="m-input" id="reg-name" type="text" placeholder="예: 스타벅스 홍대점 화장실"/>
+    </div>
+    <div class="m-field">
+      <label>주소</label>
+      <input class="m-input" id="reg-addr" type="text" placeholder="예: 서울 마포구 양화로 159"/>
+      <div style="font-size:11px;color:var(--text3);margin-top:5px;line-height:1.5;">
+        📍 입력한 주소는 화장실 정보에 그대로 표시돼요. 단, 지도 위 마커는 <b>현재 내 위치 근처</b>에 추가되니, 등록할 화장실이 있는 곳에서 등록해주세요!
+      </div>
     </div>
     <div class="m-row">
       <div class="m-field">
@@ -840,7 +850,13 @@ function openSheet(t) {
 
   document.getElementById('sh-name').textContent = t.name;
   const d = dist(uLat,uLng,t.lat,t.lng);
-  document.getElementById('sh-meta').textContent = `📍 ${fmtD(d)} · ${t.loc||''}`;
+  document.getElementById('sh-meta').textContent = `📍 ${fmtD(d)}${t.addr?' · '+t.addr:''}${t.loc?' · '+t.loc:''}`;
+
+  // 사용자가 직접 등록한 화장실이면 삭제 버튼 표시
+  const delBtn = document.getElementById('sh-del-btn');
+  const isUserAdded = dynToilets.some(x=>x.id===t.id);
+  delBtn.style.display = isUserAdded ? 'block' : 'none';
+  delBtn.onclick = ()=>deleteDynToilet(t.id);
 
   // rating (merge user reviews)
   const rData = computeRating(t);
@@ -886,6 +902,18 @@ function openSheet(t) {
 function closeSheet(){
   document.getElementById('sheet').classList.remove('open');
   sel=null;
+}
+function deleteDynToilet(id){
+  const tid = id ?? (sel&&sel.id);
+  if(tid==null) return;
+  if(!confirm('내가 등록한 화장실을 삭제할까요?\n삭제하면 되돌릴 수 없습니다.')) return;
+  dynToilets = dynToilets.filter(x=>x.id!==tid);
+  localStorage.setItem('dynToilets', JSON.stringify(dynToilets));
+  savedIds = savedIds.filter(x=>x!==tid);
+  localStorage.setItem('savedIds', JSON.stringify(savedIds));
+  closeSheet();
+  renderMarkers();
+  showToast('🗑️ 등록한 화장실이 삭제되었습니다');
 }
 function switchTab(el,pane) {
   document.querySelectorAll('.sh-tab').forEach(t=>t.classList.remove('on'));
@@ -1149,11 +1177,13 @@ function handleRegPhoto(inp){
 function submitReg(){
   const name=document.getElementById('reg-name').value.trim();
   if(!name){showToast('화장실 이름을 입력해주세요');return;}
+  const addr=document.getElementById('reg-addr').value.trim();
+  if(!addr){showToast('주소를 입력해주세요! 다른 사용자가 위치를 알 수 있어요 📍');return;}
   const type=document.getElementById('reg-type').value;
   const loc=document.getElementById('reg-loc').value.trim();
   const pw=document.getElementById('reg-pw').value.trim();
   const newT={
-    id: Date.now(), name, type, loc: loc||'미상', pw: pw||'',
+    id: Date.now(), name, addr, type, loc: loc||'미상', pw: pw||'',
     rating:0,reviews:0,bidet:document.getElementById('reg-bidet').value==='1',
     open24h:document.getElementById('reg-open').value==='1',
     disabled:false,clean:70,stalls:1,
@@ -1165,6 +1195,7 @@ function submitReg(){
   renderMarkers(); closeReg();
   showToast('🚻 화장실이 등록되었습니다! 🧻 코인 +2 지급');
   document.getElementById('reg-name').value='';
+  document.getElementById('reg-addr').value='';
   document.getElementById('reg-loc').value='';
   document.getElementById('reg-pw').value='';
   document.getElementById('reg-photo-name').textContent='';
