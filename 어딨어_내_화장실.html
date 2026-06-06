@@ -312,7 +312,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Noto Sans KR','Segoe UI',sans
 <div id="map"></div>
 <div id="gps-banner">⚠️ GPS 신호 없음 — 마지막 확인 위치 기준으로 표시합니다. 지도에서 위치를 직접 선택하세요.</div>
 
-<!-- TOP BAR -->
 <div id="topbar">
   <div id="search-row">
     <div id="search-wrap">
@@ -342,7 +341,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Noto Sans KR','Segoe UI',sans
   <div class="lg"><div class="lg-dot" style="background:#4caf50"></div>편의점</div>
 </div>
 
-<!-- BOTTOM CONTROLS -->
 <div id="bot-ctrl">
   <div id="ctrl-row">
     <div class="cw">
@@ -365,7 +363,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Noto Sans KR','Segoe UI',sans
   <button id="find-btn" onclick="findNearest()">🚻 가장 가까운 화장실 찾기</button>
 </div>
 
-<!-- BOTTOM SHEET -->
 <div id="sheet">
   <button id="sh-close" onclick="closeSheet()">✕</button>
   <div class="sh-handle"></div>
@@ -375,7 +372,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Noto Sans KR','Segoe UI',sans
   </div>
   <div id="sh-body">
 
-    <!-- INFO PANE -->
     <div class="sh-pane on" id="pane-info">
       <div id="sh-type" class="t-pub">🔵 공용 화장실</div>
       <div id="sh-name">화장실 이름</div>
@@ -389,7 +385,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Noto Sans KR','Segoe UI',sans
       <div class="cl-bar"><div class="cl-fill" id="cl-fill"></div></div>
       <div id="sh-tags"></div>
       <div id="sh-secret">
-        <!-- 잠긴 상태 -->
         <div id="sec-locked">
           <h4>🔒 비밀 화장실 정보</h4>
           <p>휴지 코인 1개를 사용하여 도어락 비밀번호와 내부 위치를 확인하세요.</p>
@@ -397,7 +392,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Noto Sans KR','Segoe UI',sans
             🧻 코인 1개 사용하여 비밀번호 확인
           </button>
         </div>
-        <!-- 해금된 상태 -->
         <div id="sec-unlocked" style="display:none">
           <h4 style="margin-bottom:10px;">🔓 비밀번호 (이미 해금됨)</h4>
           <div style="background:var(--accent-l);border-radius:14px;padding:16px;text-align:center;">
@@ -416,10 +410,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Noto Sans KR','Segoe UI',sans
         cursor:pointer;" onclick="deleteDynToilet()">🗑️ 내가 등록한 화장실 삭제</button>
     </div>
 
-    <!-- REVIEW PANE -->
     <div class="sh-pane" id="pane-review">
 
-      <!-- Write form -->
       <div id="review-form-wrap">
         <h4>✏️ 리뷰 작성 <span style="font-size:12px;color:var(--text2);font-weight:400">(작성 시 🧻 코인 +1 지급)</span></h4>
         <div id="star-pick">
@@ -440,30 +432,25 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Noto Sans KR','Segoe UI',sans
         <button id="rev-submit" onclick="submitReview()">리뷰 등록하기</button>
       </div>
 
-      <!-- Reviews list -->
       <div id="rev-list">
         <h4>전체 리뷰</h4>
         <div id="rev-cards"></div>
       </div>
     </div>
 
-  </div><!-- /sh-body -->
-</div>
+  </div></div>
 
-<!-- TOP 3 -->
 <div id="p-back" onclick="closeAllPanels()"></div>
 <div id="top3">
   <h3>🏆 가까운 화장실 TOP 3 <button id="top3-x" onclick="closeTop3()">✕</button></h3>
   <div id="t3-list"></div>
 </div>
 
-<!-- SAVED PANEL (오른쪽에서 슬라이드) -->
 <div id="saved-panel">
   <h3>💾 저장된 화장실 <button onclick="closeSaved()" style="border:none;background:none;color:var(--text2);font-size:22px;cursor:pointer;">✕</button></h3>
   <div id="saved-list"></div>
 </div>
 
-<!-- COIN MODAL -->
 <div id="modal-overlay">
   <div class="modal-box" id="modal-box">
     <div class="m-ico" id="m-ico">🔒</div>
@@ -479,7 +466,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Noto Sans KR','Segoe UI',sans
   </div>
 </div>
 
-<!-- REGISTER MODAL -->
 <div id="reg-overlay">
   <div class="modal-box">
     <h3>🚻 새 화장실 등록</h3>
@@ -492,7 +478,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Noto Sans KR','Segoe UI',sans
       <label>주소</label>
       <input class="m-input" id="reg-addr" type="text" placeholder="예: 서울 마포구 양화로 159"/>
       <div style="font-size:11px;color:var(--text3);margin-top:5px;line-height:1.5;">
-        📍 입력한 주소는 화장실 정보에 그대로 표시돼요. 단, 지도 위 마커는 <b>현재 내 위치 근처</b>에 추가되니, 등록할 화장실이 있는 곳에서 등록해주세요!
+        📍 입력한 주소는 화장실 정보에 그대로 표시돼요. 단, 지도 위 마커는 <b>현재 내 위치 근처</b>에 추가되니, 등록할 화장실이 있는 곳에서 등록해주세요! (등록 후 마커를 드래그해서 위치를 세밀하게 고칠 수 있습니다.)
       </div>
     </div>
     <div class="m-row">
@@ -553,7 +539,7 @@ const TOILETS = [
   // ── 강남구 ──
   {id:2,  name:"강남구청 공중화장실",           lat:37.5172,lng:127.0473,type:"public", rating:3.8,reviews:14,bidet:false,open24h:false,disabled:true, clean:72,stalls:4, loc:"1층"},
   {id:3,  name:"코엑스몰 B1 화장실",            lat:37.5115,lng:127.0595,type:"public", rating:4.5,reviews:62,bidet:true, open24h:false,disabled:true, clean:92,stalls:8, loc:"지하 1층 A관"},
-  {id:4,  name:"스타벅스 강남R점 화장실",       lat:37.4992,lng:127.0285,type:"secret",rating:4.0,reviews:7, bidet:true, open24h:false,disabled:false,clean:88,stalls:2, loc:"2층 좌측",   pw:"2301"},
+  {id:4,  name:"스타벅스 강남R점 화장실",       lat:37.4992,lng:127.0285,type:"secret",rating:4.0,reviews:7, bidet:true, open24h:false,disabled:false,clean:88,stalls:2, loc:"2층 좌측",    pw:"2301"},
   {id:5,  name:"선릉역 공중화장실",             lat:37.5045,lng:127.0493,type:"public", rating:3.5,reviews:21,bidet:false,open24h:true, disabled:false,clean:68,stalls:3, loc:"지하 1층"},
   {id:6,  name:"맥도날드 강남점 화장실",        lat:37.4973,lng:127.0297,type:"secret",rating:3.2,reviews:5, bidet:false,open24h:false,disabled:false,clean:65,stalls:2, loc:"3층",        pw:"0000"},
   {id:7,  name:"삼성역 공중화장실",             lat:37.5088,lng:127.0632,type:"public", rating:4.1,reviews:29,bidet:true, open24h:true, disabled:true, clean:80,stalls:5, loc:"지하 1층"},
@@ -603,7 +589,7 @@ const TOILETS = [
   {id:44, name:"올림픽공원 화장실(동문)",       lat:37.5215,lng:127.1229,type:"public", rating:4.5,reviews:52,bidet:true, open24h:false,disabled:true, clean:91,stalls:8, loc:"동문 근처"},
   {id:45, name:"잠실한강공원 화장실",           lat:37.5155,lng:127.0845,type:"public", rating:4.2,reviews:29,bidet:false,open24h:true, disabled:true, clean:81,stalls:5, loc:"공원 내"},
   {id:46, name:"석촌호수 공중화장실",           lat:37.5090,lng:127.1001,type:"public", rating:3.9,reviews:20,bidet:false,open24h:true, disabled:false,clean:74,stalls:3, loc:"호수 서쪽"},
-  {id:47, name:"롯데월드몰 화장실",             lat:37.5123,lng:127.1022,type:"secret",rating:4.3,reviews:18,bidet:true, open24h:false,disabled:true, clean:90,stalls:6, loc:"B1층",       pw:"1004"},
+  {id:47, name:"롯데월드몰 화장실",             lat:37.5123,lng:127.1022,type:"secret",rating:4.3,reviews:18,bidet:true, open24h:false,disabled:true, clean:90,stalls:6, loc:"B1층",        pw:"1004"},
   // ── 영등포구 / 여의도 ──
   {id:48, name:"여의도한강공원 화장실(북측)",   lat:37.5280,lng:126.9337,type:"public", rating:4.4,reviews:58,bidet:false,open24h:true, disabled:true, clean:87,stalls:7, loc:"공원 내"},
   {id:49, name:"영등포역 공중화장실",           lat:37.5159,lng:126.9077,type:"public", rating:3.7,reviews:23,bidet:false,open24h:true, disabled:true, clean:70,stalls:5, loc:"역사 내"},
@@ -780,16 +766,65 @@ function userIcon() {
   return L.divIcon({html:'<div class="pulse"></div>',className:'',iconSize:[18,18],iconAnchor:[9,9]});
 }
 
-// ─── MARKERS ─────────────────────────────────────────────────
+// ─── MARKERS (⭐ 내 마커 이동 제어 옵션 추가 통합) ─────────────────────
 function renderMarkers() {
   tMarkers.forEach(m=>map.removeLayer(m));
   tMarkers=[];
-  [...TOILETS,...dynToilets].filter(passFilter).forEach(t=>{
+  
+  // 1. 공공 데이터 기본 화장실 렌더링 (드래그 불가 고정)
+  TOILETS.filter(passFilter).forEach(t=>{
     const m = L.marker([t.lat,t.lng],{icon:toiletIcon(t.type,t.beta)})
       .addTo(map).on('click',e=>{L.DomEvent.stopPropagation(e);openSheet(t);});
     tMarkers.push(m);
   });
+
+  // 2. 사용자가 직접 추가한 유동성 화장실 렌더링 (⭐ draggable: true 탑재)
+  dynToilets.filter(passFilter).forEach(t=>{
+    const m = L.marker([t.lat,t.lng],{
+      icon:toiletIcon(t.type,t.beta),
+      draggable: true // ⭐ 마우스 드래그 이동 활성화
+    }).addTo(map);
+
+    // 마커 클릭 시 하단 바텀 시트 정보 패널 연동
+    m.on('click',e=>{
+      L.DomEvent.stopPropagation(e);
+      openSheet(t);
+    });
+
+    // ⭐ 드래그 드롭 마우스 오프 마침 시 좌표 영구 동기화 이벤트 연동
+    m.on('dragend', e => {
+      const newLatLng = e.target.getLatLng(); // 변경된 목적지 좌표 추출
+      updateToiletPosition(t.id, newLatLng.lat, newLatLng.lng);
+    });
+
+    tMarkers.push(m);
+  });
 }
+
+// ⭐ 드래그된 마커의 좌표 리포지셔닝 및 스토리지 동기화 제어 스크립트
+function updateToiletPosition(id, newLat, newLng) {
+  // 메모리 상의 dynToilets 좌표 정보 업데이트
+  dynToilets = dynToilets.map(t => {
+    if (t.id === id) {
+      return { ...t, lat: newLat, lng: newLng };
+    }
+    return t;
+  });
+
+  // 로컬 파일 영속성 레이어(Web Storage) 세션 플러시
+  localStorage.setItem('dynToilets', JSON.stringify(dynToilets));
+  
+  // 현재 활성화된 패널 대상물이 방금 움직인 화장실 인스턴스일 경우 거리 등 메타 데이터 갱신
+  if (sel && sel.id === id) {
+    sel.lat = newLat;
+    sel.lng = newLng;
+    const d = dist(uLat, uLng, newLat, newLng);
+    document.getElementById('sh-meta').textContent = `📍 ${fmtD(d)}${sel.addr?' · '+sel.addr:''}${sel.loc?' · '+sel.loc:''}`;
+  }
+
+  showToast('📍 화장실 마커의 위치가 수정되었습니다');
+}
+
 function addStoreMarkers() {
   STORES.forEach(s=>{
     L.marker([s.lat,s.lng],{icon:storeIcon()}).addTo(map)
@@ -918,7 +953,6 @@ function deleteDynToilet(id){
 function switchTab(el,pane) {
   document.querySelectorAll('.sh-tab').forEach(t=>t.classList.remove('on'));
   document.querySelectorAll('.sh-pane').forEach(p=>p.classList.remove('on'));
-  // find which tab
   const tabs=[...document.querySelectorAll('.sh-tab')];
   const panes=[...document.querySelectorAll('.sh-pane')];
   if(el){
@@ -996,14 +1030,12 @@ function submitReview() {
   });
   localStorage.setItem('reviews',JSON.stringify(reviewsDB));
 
-  // Coin reward
   coins++; localStorage.setItem('coins',coins); updateCoin(true);
 
   renderReviews();
   resetReviewForm();
   showToast('✅ 리뷰가 등록되었습니다! 🧻 코인 +1 지급');
 
-  // update tab count
   const rData=computeRating(sel);
   const newVisibleCnt=(reviewsDB[String(sel.id)]||[]).length;
   document.getElementById('rev-tab-cnt').textContent=`(${newVisibleCnt})`;
