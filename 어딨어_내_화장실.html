@@ -507,17 +507,89 @@ const DEF = [37.4981, 127.0276];
 
 const TOILETS = [
   {id:1,  name:"강남역 2번 출구 공중화장실",  lat:37.4984,lng:127.0260,type:"public", rating:4.2,reviews:38,bidet:true, open24h:true, disabled:true, clean:85,stalls:6, loc:"지하 1층"},
-  {id:2,  name:"강남구청 공중화장실",          lat:37.5172,lng:127.0473,type:"public", rating:3.8,reviews:14,bidet:false,open24h:false,disabled:true, clean:72,stalls:4, loc:"1층"},
-  {id:3,  name:"코엑스몰 B1 화장실",           lat:37.5115,lng:127.0595,type:"public", rating:4.5,reviews:62,bidet:true, open24h:false,disabled:true, clean:92,stalls:8, loc:"지하 1층 A관"},
-  {id:4,  name:"스타벅스 강남R점 화장실",      lat:37.4992,lng:127.0285,type:"secret",rating:4.0,reviews:7, bidet:true, open24h:false,disabled:false,clean:88,stalls:2, loc:"2층 좌측",   pw:"2301"},
-  {id:5,  name:"선릉역 공중화장실",            lat:37.5045,lng:127.0493,type:"public", rating:3.5,reviews:21,bidet:false,open24h:true, disabled:false,clean:68,stalls:3, loc:"지하 1층"},
-  {id:6,  name:"맥도날드 강남점 화장실",       lat:37.4973,lng:127.0297,type:"secret",rating:3.2,reviews:5, bidet:false,open24h:false,disabled:false,clean:65,stalls:2, loc:"3층",        pw:"0000"},
-  {id:7,  name:"삼성역 공중화장실",            lat:37.5088,lng:127.0632,type:"public", rating:4.1,reviews:29,bidet:true, open24h:true, disabled:true, clean:80,stalls:5, loc:"지하 1층"},
-  {id:8,  name:"역삼동 근린공원 화장실",       lat:37.5007,lng:127.0342,type:"public", rating:3.0,reviews:9, bidet:false,open24h:false,disabled:false,clean:55,stalls:2, loc:"공원 내"},
-  {id:9,  name:"파리바게트 테헤란로점 화장실", lat:37.5023,lng:127.0389,type:"secret",rating:3.8,reviews:4, bidet:false,open24h:false,disabled:false,clean:75,stalls:1, loc:"지하 1층",   pw:"1357"},
-  {id:10, name:"테헤란로 공공화장실",          lat:37.5063,lng:127.0451,type:"public", rating:4.3,reviews:33,bidet:true, open24h:true, disabled:true, clean:87,stalls:6, loc:"지상 1층", beta:true},
-  {id:11, name:"압구정로데오역 화장실",        lat:37.5278,lng:127.0400,type:"public", rating:3.9,reviews:17,bidet:false,open24h:false,disabled:true, clean:70,stalls:3, loc:"지하 1층"},
-  {id:12, name:"신논현역 공중화장실",          lat:37.5048,lng:127.0253,type:"public", rating:4.0,reviews:22,bidet:true, open24h:true, disabled:false,clean:82,stalls:4, loc:"지하 1층"},
+  // ── 강남구 ──
+  {id:2,  name:"강남구청 공중화장실",           lat:37.5172,lng:127.0473,type:"public", rating:3.8,reviews:14,bidet:false,open24h:false,disabled:true, clean:72,stalls:4, loc:"1층"},
+  {id:3,  name:"코엑스몰 B1 화장실",            lat:37.5115,lng:127.0595,type:"public", rating:4.5,reviews:62,bidet:true, open24h:false,disabled:true, clean:92,stalls:8, loc:"지하 1층 A관"},
+  {id:4,  name:"스타벅스 강남R점 화장실",       lat:37.4992,lng:127.0285,type:"secret",rating:4.0,reviews:7, bidet:true, open24h:false,disabled:false,clean:88,stalls:2, loc:"2층 좌측",   pw:"2301"},
+  {id:5,  name:"선릉역 공중화장실",             lat:37.5045,lng:127.0493,type:"public", rating:3.5,reviews:21,bidet:false,open24h:true, disabled:false,clean:68,stalls:3, loc:"지하 1층"},
+  {id:6,  name:"맥도날드 강남점 화장실",        lat:37.4973,lng:127.0297,type:"secret",rating:3.2,reviews:5, bidet:false,open24h:false,disabled:false,clean:65,stalls:2, loc:"3층",        pw:"0000"},
+  {id:7,  name:"삼성역 공중화장실",             lat:37.5088,lng:127.0632,type:"public", rating:4.1,reviews:29,bidet:true, open24h:true, disabled:true, clean:80,stalls:5, loc:"지하 1층"},
+  {id:8,  name:"역삼동 근린공원 화장실",        lat:37.5007,lng:127.0342,type:"public", rating:3.0,reviews:9, bidet:false,open24h:false,disabled:false,clean:55,stalls:2, loc:"공원 내"},
+  {id:9,  name:"파리바게트 테헤란로점 화장실",  lat:37.5023,lng:127.0389,type:"secret",rating:3.8,reviews:4, bidet:false,open24h:false,disabled:false,clean:75,stalls:1, loc:"지하 1층",   pw:"1357"},
+  {id:10, name:"테헤란로 공공화장실",           lat:37.5063,lng:127.0451,type:"public", rating:4.3,reviews:33,bidet:true, open24h:true, disabled:true, clean:87,stalls:6, loc:"지상 1층", beta:true},
+  {id:11, name:"압구정로데오역 화장실",         lat:37.5278,lng:127.0400,type:"public", rating:3.9,reviews:17,bidet:false,open24h:false,disabled:true, clean:70,stalls:3, loc:"지하 1층"},
+  {id:12, name:"신논현역 공중화장실",           lat:37.5048,lng:127.0253,type:"public", rating:4.0,reviews:22,bidet:true, open24h:true, disabled:false,clean:82,stalls:4, loc:"지하 1층"},
+  {id:13, name:"학동역 공중화장실",             lat:37.5196,lng:127.0338,type:"public", rating:3.7,reviews:11,bidet:false,open24h:false,disabled:true, clean:71,stalls:3, loc:"지하 1층"},
+  {id:14, name:"도산공원 공중화장실",           lat:37.5253,lng:127.0380,type:"public", rating:4.2,reviews:18,bidet:false,open24h:true, disabled:true, clean:78,stalls:4, loc:"공원 내"},
+  {id:15, name:"대치동 은마상가 화장실",        lat:37.4938,lng:127.0618,type:"secret",rating:3.5,reviews:6, bidet:false,open24h:false,disabled:false,clean:60,stalls:2, loc:"지하 1층",   pw:"4567"},
+  // ── 서초구 ──
+  {id:16, name:"교대역 공중화장실",             lat:37.4934,lng:127.0142,type:"public", rating:3.9,reviews:24,bidet:false,open24h:true, disabled:true, clean:74,stalls:4, loc:"지하 1층"},
+  {id:17, name:"서초구청 공중화장실",           lat:37.4836,lng:127.0325,type:"public", rating:4.0,reviews:12,bidet:true, open24h:false,disabled:true, clean:81,stalls:5, loc:"1층"},
+  {id:18, name:"사당역 공중화장실",             lat:37.4766,lng:126.9817,type:"public", rating:3.6,reviews:19,bidet:false,open24h:true, disabled:false,clean:67,stalls:3, loc:"지하 1층"},
+  {id:19, name:"반포한강공원 화장실",           lat:37.5089,lng:126.9944,type:"public", rating:4.4,reviews:41,bidet:false,open24h:true, disabled:true, clean:85,stalls:6, loc:"공원 내"},
+  {id:20, name:"방배역 공중화장실",             lat:37.4815,lng:126.9974,type:"public", rating:3.8,reviews:8, bidet:false,open24h:false,disabled:false,clean:69,stalls:2, loc:"지하 1층"},
+  // ── 마포구 ──
+  {id:21, name:"홍대입구역 공중화장실",         lat:37.5573,lng:126.9245,type:"public", rating:4.0,reviews:53,bidet:false,open24h:true, disabled:true, clean:76,stalls:5, loc:"지하 1층"},
+  {id:22, name:"합정역 공중화장실",             lat:37.5497,lng:126.9147,type:"public", rating:3.9,reviews:27,bidet:false,open24h:true, disabled:true, clean:72,stalls:4, loc:"지하 1층"},
+  {id:23, name:"망원한강공원 화장실",           lat:37.5546,lng:126.9003,type:"public", rating:4.3,reviews:36,bidet:false,open24h:true, disabled:true, clean:82,stalls:6, loc:"공원 내"},
+  {id:24, name:"연남동 경의선숲길 화장실",      lat:37.5625,lng:126.9269,type:"public", rating:4.1,reviews:22,bidet:false,open24h:true, disabled:false,clean:79,stalls:3, loc:"경의선숲길"},
+  {id:25, name:"카페 홍대점 화장실",            lat:37.5580,lng:126.9220,type:"secret",rating:3.8,reviews:9, bidet:false,open24h:false,disabled:false,clean:72,stalls:1, loc:"2층",        pw:"8282"},
+  // ── 종로구 ──
+  {id:26, name:"광화문광장 공중화장실",         lat:37.5752,lng:126.9769,type:"public", rating:4.2,reviews:47,bidet:false,open24h:true, disabled:true, clean:83,stalls:6, loc:"광장 내"},
+  {id:27, name:"경복궁역 공중화장실",           lat:37.5759,lng:126.9720,type:"public", rating:4.0,reviews:31,bidet:false,open24h:false,disabled:true, clean:78,stalls:4, loc:"지하 1층"},
+  {id:28, name:"인사동 공중화장실",             lat:37.5740,lng:126.9849,type:"public", rating:3.7,reviews:25,bidet:false,open24h:true, disabled:false,clean:70,stalls:3, loc:"지상 1층"},
+  {id:29, name:"종로3가역 공중화장실",          lat:37.5706,lng:126.9918,type:"public", rating:3.5,reviews:18,bidet:false,open24h:true, disabled:true, clean:65,stalls:4, loc:"지하 1층"},
+  {id:30, name:"창덕궁 앞 공중화장실",          lat:37.5796,lng:126.9910,type:"public", rating:4.1,reviews:14,bidet:false,open24h:false,disabled:true, clean:80,stalls:3, loc:"궁 앞"},
+  // ── 중구 ──
+  {id:31, name:"명동역 공중화장실",             lat:37.5636,lng:126.9847,type:"public", rating:3.8,reviews:39,bidet:false,open24h:true, disabled:true, clean:72,stalls:5, loc:"지하 1층"},
+  {id:32, name:"동대문역사문화공원 화장실",     lat:37.5651,lng:127.0095,type:"public", rating:4.0,reviews:28,bidet:false,open24h:true, disabled:true, clean:77,stalls:6, loc:"공원 내"},
+  {id:33, name:"을지로입구역 공중화장실",       lat:37.5659,lng:126.9824,type:"public", rating:3.6,reviews:16,bidet:false,open24h:true, disabled:false,clean:68,stalls:3, loc:"지하 1층"},
+  {id:34, name:"남대문시장 공중화장실",         lat:37.5594,lng:126.9769,type:"public", rating:3.3,reviews:22,bidet:false,open24h:false,disabled:false,clean:58,stalls:4, loc:"시장 내"},
+  // ── 용산구 ──
+  {id:35, name:"이태원역 공중화장실",           lat:37.5347,lng:126.9947,type:"public", rating:3.9,reviews:31,bidet:false,open24h:true, disabled:true, clean:73,stalls:4, loc:"지하 1층"},
+  {id:36, name:"용산역 공중화장실",             lat:37.5297,lng:126.9651,type:"public", rating:4.1,reviews:24,bidet:true, open24h:true, disabled:true, clean:82,stalls:5, loc:"역사 내"},
+  {id:37, name:"한강공원 이촌지구 화장실",      lat:37.5231,lng:126.9681,type:"public", rating:4.3,reviews:38,bidet:false,open24h:true, disabled:true, clean:84,stalls:6, loc:"공원 내"},
+  {id:38, name:"경리단길 공중화장실",           lat:37.5378,lng:127.0002,type:"public", rating:3.5,reviews:10,bidet:false,open24h:false,disabled:false,clean:65,stalls:2, loc:"지상 1층"},
+  // ── 성동구 / 광진구 ──
+  {id:39, name:"성수역 공중화장실",             lat:37.5447,lng:127.0567,type:"public", rating:4.2,reviews:33,bidet:false,open24h:true, disabled:true, clean:80,stalls:4, loc:"지하 1층"},
+  {id:40, name:"건대입구역 공중화장실",         lat:37.5402,lng:127.0697,type:"public", rating:3.8,reviews:26,bidet:false,open24h:true, disabled:true, clean:73,stalls:5, loc:"지하 1층"},
+  {id:41, name:"뚝섬한강공원 화장실",           lat:37.5283,lng:127.0656,type:"public", rating:4.4,reviews:42,bidet:false,open24h:true, disabled:true, clean:86,stalls:6, loc:"공원 내"},
+  {id:42, name:"어린이대공원역 화장실",         lat:37.5483,lng:127.0734,type:"public", rating:3.7,reviews:15,bidet:false,open24h:false,disabled:true, clean:70,stalls:3, loc:"지하 1층"},
+  // ── 송파구 ──
+  {id:43, name:"잠실역 공중화장실",             lat:37.5133,lng:127.1001,type:"public", rating:4.0,reviews:45,bidet:false,open24h:true, disabled:true, clean:78,stalls:6, loc:"지하 1층"},
+  {id:44, name:"올림픽공원 화장실(동문)",       lat:37.5215,lng:127.1229,type:"public", rating:4.5,reviews:52,bidet:true, open24h:false,disabled:true, clean:91,stalls:8, loc:"동문 근처"},
+  {id:45, name:"잠실한강공원 화장실",           lat:37.5155,lng:127.0845,type:"public", rating:4.2,reviews:29,bidet:false,open24h:true, disabled:true, clean:81,stalls:5, loc:"공원 내"},
+  {id:46, name:"석촌호수 공중화장실",           lat:37.5090,lng:127.1001,type:"public", rating:3.9,reviews:20,bidet:false,open24h:true, disabled:false,clean:74,stalls:3, loc:"호수 서쪽"},
+  {id:47, name:"롯데월드몰 화장실",             lat:37.5123,lng:127.1022,type:"secret",rating:4.3,reviews:18,bidet:true, open24h:false,disabled:true, clean:90,stalls:6, loc:"B1층",       pw:"1004"},
+  // ── 영등포구 / 여의도 ──
+  {id:48, name:"여의도한강공원 화장실(북측)",   lat:37.5280,lng:126.9337,type:"public", rating:4.4,reviews:58,bidet:false,open24h:true, disabled:true, clean:87,stalls:7, loc:"공원 내"},
+  {id:49, name:"영등포역 공중화장실",           lat:37.5159,lng:126.9077,type:"public", rating:3.7,reviews:23,bidet:false,open24h:true, disabled:true, clean:70,stalls:5, loc:"역사 내"},
+  {id:50, name:"여의도공원 화장실",             lat:37.5243,lng:126.9245,type:"public", rating:4.1,reviews:30,bidet:false,open24h:true, disabled:true, clean:80,stalls:4, loc:"공원 내"},
+  {id:51, name:"당산역 공중화장실",             lat:37.5338,lng:126.9000,type:"public", rating:3.6,reviews:14,bidet:false,open24h:true, disabled:false,clean:66,stalls:3, loc:"지하 1층"},
+  // ── 은평구 / 서대문구 ──
+  {id:52, name:"신촌역 공중화장실",             lat:37.5553,lng:126.9367,type:"public", rating:3.8,reviews:28,bidet:false,open24h:true, disabled:true, clean:72,stalls:4, loc:"지하 1층"},
+  {id:53, name:"연세로 공중화장실",             lat:37.5584,lng:126.9387,type:"public", rating:3.6,reviews:17,bidet:false,open24h:false,disabled:false,clean:67,stalls:3, loc:"지상 1층"},
+  {id:54, name:"불광천 공중화장실",             lat:37.6018,lng:126.9310,type:"public", rating:4.0,reviews:12,bidet:false,open24h:true, disabled:true, clean:76,stalls:4, loc:"천변"},
+  // ── 동작구 / 관악구 ──
+  {id:55, name:"노량진역 공중화장실",           lat:37.5134,lng:126.9423,type:"public", rating:3.5,reviews:19,bidet:false,open24h:true, disabled:false,clean:64,stalls:3, loc:"지하 1층"},
+  {id:56, name:"보라매공원 화장실",             lat:37.4939,lng:126.9177,type:"public", rating:4.2,reviews:25,bidet:false,open24h:true, disabled:true, clean:82,stalls:5, loc:"공원 내"},
+  {id:57, name:"서울대입구역 공중화장실",       lat:37.4813,lng:126.9527,type:"public", rating:3.7,reviews:21,bidet:false,open24h:true, disabled:true, clean:70,stalls:4, loc:"지하 1층"},
+  // ── 노원구 / 도봉구 ──
+  {id:58, name:"노원역 공중화장실",             lat:37.6554,lng:127.0561,type:"public", rating:3.9,reviews:18,bidet:false,open24h:true, disabled:true, clean:74,stalls:4, loc:"지하 1층"},
+  {id:59, name:"수락산역 공중화장실",           lat:37.6711,lng:127.0642,type:"public", rating:3.6,reviews:9, bidet:false,open24h:false,disabled:false,clean:65,stalls:2, loc:"지하 1층"},
+  {id:60, name:"도봉산역 공중화장실",           lat:37.6889,lng:127.0459,type:"public", rating:4.0,reviews:14,bidet:false,open24h:true, disabled:true, clean:77,stalls:3, loc:"지하 1층"},
+  // ── 강서구 / 양천구 ──
+  {id:61, name:"발산역 공중화장실",             lat:37.5589,lng:126.8383,type:"public", rating:3.8,reviews:13,bidet:false,open24h:true, disabled:true, clean:73,stalls:3, loc:"지하 1층"},
+  {id:62, name:"개화산역 공중화장실",           lat:37.5703,lng:126.8076,type:"public", rating:3.5,reviews:8, bidet:false,open24h:false,disabled:false,clean:62,stalls:2, loc:"지하 1층"},
+  {id:63, name:"목동 한강공원 화장실",          lat:37.5390,lng:126.8642,type:"public", rating:4.1,reviews:22,bidet:false,open24h:true, disabled:true, clean:80,stalls:4, loc:"공원 내"},
+  // ── 동대문구 / 성북구 ──
+  {id:64, name:"동대문역 공중화장실",           lat:37.5717,lng:127.0096,type:"public", rating:3.6,reviews:20,bidet:false,open24h:true, disabled:false,clean:67,stalls:4, loc:"지하 1층"},
+  {id:65, name:"혜화역 공중화장실",             lat:37.5825,lng:127.0017,type:"public", rating:3.9,reviews:16,bidet:false,open24h:false,disabled:true, clean:73,stalls:3, loc:"지하 1층"},
+  {id:66, name:"성신여대입구역 공중화장실",     lat:37.5926,lng:127.0165,type:"public", rating:3.7,reviews:11,bidet:false,open24h:true, disabled:false,clean:69,stalls:3, loc:"지하 1층"},
+  // ── 강동구 ──
+  {id:67, name:"천호역 공중화장실",             lat:37.5386,lng:127.1236,type:"public", rating:3.8,reviews:17,bidet:false,open24h:true, disabled:true, clean:71,stalls:4, loc:"지하 1층"},
+  {id:68, name:"암사역 공중화장실",             lat:37.5518,lng:127.1375,type:"public", rating:3.5,reviews:9, bidet:false,open24h:false,disabled:false,clean:64,stalls:2, loc:"지하 1층"},
+  {id:69, name:"고덕천 공중화장실",             lat:37.5553,lng:127.1549,type:"public", rating:4.0,reviews:13,bidet:false,open24h:true, disabled:true, clean:78,stalls:3, loc:"천변"},
 ];
 
 const STORES = [
@@ -528,7 +600,23 @@ const STORES = [
   {name:"미니스톱 강남점",  lat:37.4976,lng:127.0248},
 ];
 
-const AC_BASE = ["강남역 2호선","강남구청","강남파이낸스센터","선릉역 2호선","삼성역 코엑스","역삼역 2호선","코엑스몰 B1","신논현역 9호선","압구정로데오역"];
+const AC_BASE = [
+  "강남역","선릉역","삼성역 코엑스","역삼역","압구정로데오역","학동역","도산공원","신논현역",
+  "교대역","서초구청","사당역","반포한강공원","방배역",
+  "홍대입구역","합정역","망원한강공원","연남동 경의선숲길",
+  "광화문광장","경복궁역","인사동","종로3가역","창덕궁",
+  "명동역","동대문역사문화공원","을지로입구역","남대문시장",
+  "이태원역","용산역","한강공원 이촌지구","경리단길",
+  "성수역","건대입구역","뚝섬한강공원","어린이대공원역",
+  "잠실역","올림픽공원","잠실한강공원","석촌호수","롯데월드몰",
+  "여의도한강공원","영등포역","여의도공원","당산역",
+  "신촌역","연세로","불광천",
+  "노량진역","보라매공원","서울대입구역",
+  "노원역","수락산역","도봉산역",
+  "발산역","목동 한강공원",
+  "동대문역","혜화역","성신여대입구역",
+  "천호역","암사역","고덕천",
+];
 const AVATARS = ["🐱","🐶","🦊","🐼","🐨","🐸","🦁","🐯","🦝","🐺","🦄","🐻"];
 const NICK_ADJ = ["깔끔한","소심한","용감한","꼼꼼한","급한","여유로운","예민한","대담한"];
 const NICK_NOUN= ["여행자","탐험가","방랑자","산책러","도시인","나그네"];
