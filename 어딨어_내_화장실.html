@@ -68,9 +68,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Noto Sans KR','Segoe UI',sans
   box-shadow:0 2px 12px rgba(41,121,255,.35);}
 
 /* ── COIN ── */
-#coin{position:fixed;top:14px;right:68px;z-index:810;background:var(--yellow);color:#5a3800;
-  border-radius:22px;padding:7px 13px;font-size:13px;font-weight:700;
-  box-shadow:0 3px 12px rgba(255,193,7,.4);display:flex;align-items:center;gap:5px;cursor:default;}
+#coin{background:var(--yellow);color:#5a3800;border-radius:22px;padding:7px 12px;
+  font-size:13px;font-weight:700;box-shadow:0 2px 8px rgba(255,193,7,.35);
+  display:flex;align-items:center;gap:4px;cursor:default;white-space:nowrap;flex-shrink:0;}
 
 /* ── LEGEND ── */
 #legend{position:fixed;top:116px;right:12px;z-index:700;background:var(--bg);
@@ -320,6 +320,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Noto Sans KR','Segoe UI',sans
       <input id="search-input" type="text" placeholder="위치 또는 화장실 검색" autocomplete="off"/>
       <div id="ac"></div>
     </div>
+    <div id="coin">🧻 <span id="coin-n">10</span></div>
     <div id="top-btns">
       <button class="top-btn" onclick="toggleDark()" id="dark-btn">🌙</button>
       <button class="top-btn" onclick="openReg()" title="화장실 등록">➕</button>
@@ -334,8 +335,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Noto Sans KR','Segoe UI',sans
     <button class="chip" onclick="setFilter(this,'secret')">🟡 비밀</button>
   </div>
 </div>
-
-<div id="coin">🧻 <span id="coin-n">10</span> 코인</div>
 
 <div id="legend">
   <div class="lg"><div class="lg-dot" style="background:#2979ff"></div>공용 화장실</div>
