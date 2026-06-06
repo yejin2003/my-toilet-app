@@ -213,6 +213,23 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Noto Sans KR','Segoe UI',sans
 /* ── TOP 3 PANEL ── */
 #p-back{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1050;}
 #p-back.open{display:block;}
+#saved-panel{position:fixed;top:50%;right:0;transform:translateY(-50%) translateX(110%);z-index:1060;
+  background:var(--sheet);border-radius:26px 0 0 26px;box-shadow:-6px 0 36px var(--shadow);
+  padding:24px 18px;width:min(88vw,370px);max-height:80dvh;overflow-y:auto;
+  transition:transform .38s cubic-bezier(.32,.72,0,1);}
+#saved-panel.open{transform:translateY(-50%) translateX(0);}
+#saved-panel h3{font-size:17px;font-weight:800;margin-bottom:18px;
+  display:flex;justify-content:space-between;align-items:center;}
+.saved-item{display:flex;align-items:center;gap:12px;padding:13px 0;
+  border-bottom:1px solid var(--bg3);cursor:pointer;}
+.saved-item:last-child{border-bottom:none;}
+.saved-num{width:32px;height:32px;border-radius:50%;background:var(--green);color:#fff;
+  font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.saved-info{flex:1;}
+.saved-info .sn{font-size:14px;font-weight:700;margin-bottom:3px;}
+.saved-info .sm{font-size:12px;color:var(--text2);}
+.saved-del{border:none;background:var(--bg3);color:var(--text2);width:28px;height:28px;
+  border-radius:50%;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 #top3{position:fixed;top:50%;left:0;transform:translateY(-50%) translateX(-110%);z-index:1060;
   background:var(--sheet);border-radius:0 26px 26px 0;box-shadow:6px 0 36px var(--shadow);
   padding:24px 18px;width:min(88vw,370px);transition:transform .38s cubic-bezier(.32,.72,0,1);}
@@ -373,12 +390,23 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Noto Sans KR','Segoe UI',sans
       <div class="cl-bar"><div class="cl-fill" id="cl-fill"></div></div>
       <div id="sh-tags"></div>
       <div id="sh-secret">
-        <h4>🔒 비밀 화장실 정보</h4>
-        <p>휴지 코인 1개를 사용하여 도어락 비밀번호와 내부 위치를 확인하세요.</p>
-        <button class="sh-btn" style="background:#e6a800;color:#5a3800;border-radius:14px;padding:13px;width:100%;font-size:14px;font-weight:700;border:none;cursor:pointer;" onclick="openCoinModal()">
-          🧻 코인 1개 사용하여 비밀번호 확인
-        </button>
-        <div id="sec-loc"></div>
+        <!-- 잠긴 상태 -->
+        <div id="sec-locked">
+          <h4>🔒 비밀 화장실 정보</h4>
+          <p>휴지 코인 1개를 사용하여 도어락 비밀번호와 내부 위치를 확인하세요.</p>
+          <button class="sh-btn" style="background:#e6a800;color:#5a3800;border-radius:14px;padding:13px;width:100%;font-size:14px;font-weight:700;border:none;cursor:pointer;" onclick="openCoinModal()">
+            🧻 코인 1개 사용하여 비밀번호 확인
+          </button>
+        </div>
+        <!-- 해금된 상태 -->
+        <div id="sec-unlocked" style="display:none">
+          <h4 style="margin-bottom:10px;">🔓 비밀번호 (이미 해금됨)</h4>
+          <div style="background:var(--accent-l);border-radius:14px;padding:16px;text-align:center;">
+            <div style="font-size:11px;color:var(--text2);font-weight:700;margin-bottom:8px;">도어락 비밀번호</div>
+            <div id="sec-pw-val" style="font-size:34px;font-weight:900;color:var(--accent);letter-spacing:8px;"></div>
+            <div id="sec-loc" style="font-size:12px;color:var(--text2);margin-top:8px;"></div>
+          </div>
+        </div>
       </div>
       <div id="sh-acts">
         <button class="sh-btn sh-sec" onclick="saveToilet()">💾 저장</button>
@@ -421,10 +449,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Noto Sans KR','Segoe UI',sans
 </div>
 
 <!-- TOP 3 -->
-<div id="p-back" onclick="closeTop3()"></div>
+<div id="p-back" onclick="closeAllPanels()"></div>
 <div id="top3">
   <h3>🏆 가까운 화장실 TOP 3 <button id="top3-x" onclick="closeTop3()">✕</button></h3>
   <div id="t3-list"></div>
+</div>
+
+<!-- SAVED PANEL (오른쪽에서 슬라이드) -->
+<div id="saved-panel">
+  <h3>💾 저장된 화장실 <button onclick="closeSaved()" style="border:none;background:none;color:var(--text2);font-size:22px;cursor:pointer;">✕</button></h3>
+  <div id="saved-list"></div>
 </div>
 
 <!-- COIN MODAL -->
@@ -832,30 +866,18 @@ function openSheet(t) {
 
   // secret
   const secEl = document.getElementById('sh-secret');
-  const secLoc = document.getElementById('sec-loc');
   if(t.type==='secret'){
     secEl.style.display='block';
-    if(unlockedIds.includes(t.id)){
-      // 이미 해금된 화장실 → 바로 비번 표시
-      secEl.innerHTML=`
-        <h4>🔓 비밀번호 (이미 해금됨)</h4>
-        <div style="background:var(--accent-l);border-radius:12px;padding:14px;text-align:center;margin-top:8px;">
-          <div style="font-size:11px;color:var(--text2);font-weight:700;margin-bottom:6px;">도어락 비밀번호</div>
-          <div style="font-size:32px;font-weight:900;color:var(--accent);letter-spacing:8px;">${t.pw||'????'}</div>
-          <div style="font-size:12px;color:var(--text2);margin-top:6px;">📍 위치: ${t.loc||''}</div>
-        </div>`;
-    } else {
-      secEl.innerHTML=`
-        <h4>🔒 비밀 화장실 정보</h4>
-        <p>휴지 코인 1개를 사용하여 도어락 비밀번호와 내부 위치를 확인하세요.</p>
-        <button class="sh-btn" style="background:#e6a800;color:#5a3800;border-radius:14px;padding:13px;width:100%;font-size:14px;font-weight:700;border:none;cursor:pointer;" onclick="openCoinModal()">
-          🧻 코인 1개 사용하여 비밀번호 확인
-        </button>`;
+    const already = unlockedIds.includes(t.id);
+    document.getElementById('sec-locked').style.display   = already ? 'none'  : 'block';
+    document.getElementById('sec-unlocked').style.display = already ? 'block' : 'none';
+    if(already){
+      document.getElementById('sec-pw-val').textContent = t.pw||'????';
+      document.getElementById('sec-loc').textContent    = `📍 위치: ${t.loc||''}`;
     }
   } else {
     secEl.style.display='none';
   }
-  secLoc.textContent='';
 
   document.getElementById('sheet').classList.add('open');
   resetReviewForm();
@@ -1042,10 +1064,35 @@ function saveToilet(){
 function openSaved(){
   if(!savedIds.length){showToast('저장된 화장실이 없습니다');return;}
   const list=[...TOILETS,...dynToilets].filter(t=>savedIds.includes(t.id));
-  if(!list.length)return;
-  map.setView([list[0].lat,list[0].lng],16); openSheet(list[0]);
-  showToast(`💾 저장된 화장실 ${list.length}개`);
+  if(!list.length){showToast('저장된 화장실이 없습니다');return;}
+  document.getElementById('saved-list').innerHTML = list.map((t,i)=>`
+    <div class="saved-item" onclick="selectSaved(${t.id})">
+      <div class="saved-num">${i+1}</div>
+      <div class="saved-info">
+        <div class="sn">${t.name}</div>
+        <div class="sm">${fmtD(dist(uLat,uLng,t.lat,t.lng))} · ${t.type==='secret'?'🔒 비밀':'🔵 공용'} · ⭐${t.rating}</div>
+      </div>
+      <button class="saved-del" onclick="event.stopPropagation();removeSaved(${t.id})" title="저장 해제">✕</button>
+    </div>`).join('');
+  document.getElementById('saved-panel').classList.add('open');
+  document.getElementById('p-back').classList.add('open');
 }
+function closeSaved(){
+  document.getElementById('saved-panel').classList.remove('open');
+  document.getElementById('p-back').classList.remove('open');
+}
+function selectSaved(id){
+  const t=[...TOILETS,...dynToilets].find(x=>x.id===id);
+  if(!t)return; closeSaved(); map.setView([t.lat,t.lng],17); openSheet(t);
+}
+function removeSaved(id){
+  savedIds=savedIds.filter(x=>x!==id);
+  localStorage.setItem('savedIds',JSON.stringify(savedIds));
+  updateSavedBadge();
+  if(!savedIds.length){closeSaved();showToast('저장된 화장실이 없습니다');return;}
+  openSaved(); // 목록 새로고침
+}
+function closeAllPanels(){closeTop3();closeSaved();}
 function updateSavedBadge(){
   const b=document.getElementById('saved-badge');
   b.textContent=savedIds.length;
@@ -1071,16 +1118,17 @@ function useCoin(){
     unlockedIds.push(sel.id);
     localStorage.setItem('unlockedIds',JSON.stringify(unlockedIds));
   }
+  // 모달에 비밀번호 표시
   document.getElementById('pw-val').textContent=sel.pw||'????';
   document.getElementById('pw-loc').textContent=`📍 위치: ${sel.loc||''}`;
   document.getElementById('pw-reveal').style.display='block';
   document.getElementById('m-ico').textContent='🔓';
   document.getElementById('m-title').textContent='비밀번호 확인 완료!';
   document.getElementById('m-sub').innerHTML='';
+  const saved = sel; // 클로저용
   const btn=document.getElementById('m-act');
-  btn.textContent='✓ 닫기'; btn.onclick=closeModal;
-  // 바텀시트의 비밀번호 섹션도 즉시 업데이트
-  openSheet(sel);
+  btn.textContent='✓ 닫기';
+  btn.onclick=()=>{ closeModal(); openSheet(saved); }; // 모달 닫은 뒤 시트 갱신
 }
 function closeModal(){document.getElementById('modal-overlay').classList.remove('open');}
 
