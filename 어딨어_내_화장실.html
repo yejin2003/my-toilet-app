@@ -674,6 +674,7 @@ let tMarkers = [];
 let dark = localStorage.getItem('dark') === '1';
 let coins = parseInt(localStorage.getItem('coins') ?? '10');
 let savedIds = JSON.parse(localStorage.getItem('savedIds') || '[]');
+let unlockedIds = JSON.parse(localStorage.getItem('unlockedIds') || '[]'); // 이미 해금한 비밀 화장실
 let reviewsDB = JSON.parse(localStorage.getItem('reviews') || '{}'); // {toiletId: [{...}]}
 let dynToilets = JSON.parse(localStorage.getItem('dynToilets') || '[]'); // user-registered
 let pickedStar = 0;
@@ -830,8 +831,31 @@ function openSheet(t) {
   document.getElementById('sh-tags').innerHTML=tags.join('');
 
   // secret
-  document.getElementById('sh-secret').style.display = t.type==='secret'?'block':'none';
-  document.getElementById('sec-loc').textContent='';
+  const secEl = document.getElementById('sh-secret');
+  const secLoc = document.getElementById('sec-loc');
+  if(t.type==='secret'){
+    secEl.style.display='block';
+    if(unlockedIds.includes(t.id)){
+      // 이미 해금된 화장실 → 바로 비번 표시
+      secEl.innerHTML=`
+        <h4>🔓 비밀번호 (이미 해금됨)</h4>
+        <div style="background:var(--accent-l);border-radius:12px;padding:14px;text-align:center;margin-top:8px;">
+          <div style="font-size:11px;color:var(--text2);font-weight:700;margin-bottom:6px;">도어락 비밀번호</div>
+          <div style="font-size:32px;font-weight:900;color:var(--accent);letter-spacing:8px;">${t.pw||'????'}</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:6px;">📍 위치: ${t.loc||''}</div>
+        </div>`;
+    } else {
+      secEl.innerHTML=`
+        <h4>🔒 비밀 화장실 정보</h4>
+        <p>휴지 코인 1개를 사용하여 도어락 비밀번호와 내부 위치를 확인하세요.</p>
+        <button class="sh-btn" style="background:#e6a800;color:#5a3800;border-radius:14px;padding:13px;width:100%;font-size:14px;font-weight:700;border:none;cursor:pointer;" onclick="openCoinModal()">
+          🧻 코인 1개 사용하여 비밀번호 확인
+        </button>`;
+    }
+  } else {
+    secEl.style.display='none';
+  }
+  secLoc.textContent='';
 
   document.getElementById('sheet').classList.add('open');
   resetReviewForm();
@@ -1042,6 +1066,11 @@ function useCoin(){
   if(coins<=0){showToast('🧻 코인이 부족합니다! 리뷰를 작성하면 코인을 받을 수 있어요.');closeModal();return;}
   if(!sel||sel.type!=='secret'){closeModal();return;}
   coins--; localStorage.setItem('coins',coins); updateCoin();
+  // 해금 목록에 저장
+  if(!unlockedIds.includes(sel.id)){
+    unlockedIds.push(sel.id);
+    localStorage.setItem('unlockedIds',JSON.stringify(unlockedIds));
+  }
   document.getElementById('pw-val').textContent=sel.pw||'????';
   document.getElementById('pw-loc').textContent=`📍 위치: ${sel.loc||''}`;
   document.getElementById('pw-reveal').style.display='block';
@@ -1050,7 +1079,8 @@ function useCoin(){
   document.getElementById('m-sub').innerHTML='';
   const btn=document.getElementById('m-act');
   btn.textContent='✓ 닫기'; btn.onclick=closeModal;
-  document.getElementById('sec-loc').textContent=`📍 위치: ${sel.loc}`;
+  // 바텀시트의 비밀번호 섹션도 즉시 업데이트
+  openSheet(sel);
 }
 function closeModal(){document.getElementById('modal-overlay').classList.remove('open');}
 
