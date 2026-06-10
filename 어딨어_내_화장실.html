@@ -5542,10 +5542,9 @@ function saveToilet(){
   updateSavedBadge(); showToast('💾 오프라인에서도 확인 가능하도록 저장했습니다');
 }
 function openSaved(){
-  if(!savedIds.length){showToast('저장된 화장실이 없습니다');return;}
   const list=[...TOILETS,...dynToilets].filter(t=>savedIds.includes(t.id));
-  if(!list.length){showToast('저장된 화장실이 없습니다');return;}
-  document.getElementById('saved-list').innerHTML = list.map((t,i)=>`
+  document.getElementById('saved-list').innerHTML = list.length
+    ? list.map((t,i)=>`
     <div class="saved-item" onclick="selectSaved(${t.id})">
       <div class="saved-num">${i+1}</div>
       <div class="saved-info">
@@ -5553,7 +5552,8 @@ function openSaved(){
         <div class="sm">${fmtD(dist(uLat,uLng,t.lat,t.lng))} · ${t.type==='secret'?'🔒 비밀':'🔵 공용'} · ⭐${t.rating}</div>
       </div>
       <button class="saved-del" onclick="event.stopPropagation();removeSaved(${t.id})" title="저장 해제">✕</button>
-    </div>`).join('');
+    </div>`).join('')
+    : '<div style="text-align:center;padding:40px 0;color:var(--text3);font-size:14px;">💾 저장된 화장실이 없습니다<br><span style="font-size:12px;margin-top:6px;display:block;">화장실 상세 화면에서 저장 버튼을 눌러보세요</span></div>';
   document.getElementById('saved-panel').classList.add('open');
   document.getElementById('p-back').classList.add('open');
 }
