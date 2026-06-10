@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>어딨어 내 화장실</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+
+:root{
+  --bg:#fff;--bg2:#f5f5f7;--bg3:#e8e8ed;
+  --text:#111;--text2:#666;--text3:#aaa;
+  --accent:#2979ff;--accent-l:#e8f0ff;
+  --yellow:#ffc107;--yellow-l:#fff8e1;
+  --green:#34c759;--red:#ff3b30;--orange:#ff9500;
+  --shadow:rgba(0,0,0,.12);--shadow2:rgba(0,0,0,.06);
+  --sheet:#fff;--radius:20px;
+}
+.dark{
+  --bg:#0d0d14;--bg2:#16182a;--bg3:#242640;
+  --text:#f0f0f5;--text2:#9999bb;--text3:#555577;
+  --accent:#5b9cff;--accent-l:#0e1f40;
+  --yellow:#ffd54f;--yellow-l:#241f00;
+  --shadow:rgba(0,0,0,.5);--shadow2:rgba(0,0,0,.3);
+  --sheet:#16182a;
+}
+
+body{font-family:-apple-system,BlinkMacSystemFont,'Noto Sans KR','Segoe UI',sans-serif;
+  background:var(--bg);color:var(--text);height:100dvh;overflow:hidden;}
+
+/* ── MAP ── */
+#map{position:fixed;inset:0;z-index:0;}
+
+/* ── TOPBAR ── */
+#topbar{position:fixed;top:0;left:0;right:0;z-index:800;
+  padding:12px 12px 0;display:flex;flex-direction:column;gap:8px;pointer-events:none;}
+#topbar>*{pointer-events:auto;}
+#search-row{display:flex;gap:8px;align-items:center;}
+#search-wrap{flex:1;position:relative;}
+#search-input{width:100%;padding:13px 18px 13px 42px;border-radius:28px;border:none;
+  background:var(--bg);color:var(--text);font-size:15px;
+  box-shadow:0 3px 16px var(--shadow);outline:none;transition:box-shadow .2s;}
+#search-input:focus{box-shadow:0 3px 20px rgba(41,121,255,.3);}
+#search-input::placeholder{color:var(--text3);}
+#search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none;}
+#top-btns{display:flex;gap:8px;}
+.top-btn{width:46px;height:46px;border-radius:50%;border:none;background:var(--bg);
+  color:var(--text);font-size:20px;cursor:pointer;box-shadow:0 3px 16px var(--shadow);
+  display:flex;align-items:center;justify-content:center;transition:transform .15s;}
+.top-btn:active{transform:scale(.88);}
+
+#ac{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--bg);
+  border-radius:18px;box-shadow:0 8px 28px var(--shadow);overflow:hidden;display:none;z-index:900;}
+#ac.show{display:block;}
+.ac-item{padding:13px 18px;cursor:pointer;font-size:14px;color:var(--text);
+  border-bottom:1px solid var(--bg3);transition:background .15s;}
+.ac-item:last-child{border-bottom:none;}
+.ac-item:hover{background:var(--bg2);}
+
+/* Filter chips */
+#chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;}
+#chips::-webkit-scrollbar{display:none;}
+.chip{white-space:nowrap;padding:8px 16px;border-radius:22px;border:1.5px solid var(--bg3);
+  background:var(--bg);color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;
+  box-shadow:0 2px 8px var(--shadow2);transition:all .2s;}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff;
+  box-shadow:0 2px 12px rgba(41,121,255,.35);}
+
+/* ── COIN ── */
+#coin{background:var(--yellow);color:#5a3800;border-radius:22px;padding:7px 12px;
+  font-size:13px;font-weight:700;box-shadow:0 2px 8px rgba(255,193,7,.35);
+  display:flex;align-items:center;gap:4px;cursor:default;white-space:nowrap;flex-shrink:0;}
+
+/* ── LEGEND ── */
+#legend{position:fixed;top:116px;right:12px;z-index:700;background:var(--bg);
+  border-radius:14px;padding:10px 14px;box-shadow:0 3px 14px var(--shadow);font-size:12px;}
+.lg{display:flex;align-items:center;gap:8px;color:var(--text2);margin-bottom:6px;font-weight:500;}
+.lg:last-child{margin-bottom:0;}
+.lg-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
+
+/* ── BOTTOM CONTROLS ── */
+#bot-ctrl{position:fixed;bottom:22px;left:0;right:0;z-index:700;
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  padding:0 16px;pointer-events:none;}
+#bot-ctrl>*{pointer-events:auto;}
+#find-btn{background:var(--accent);color:#fff;border:none;border-radius:34px;
+  padding:18px 32px;font-size:17px;font-weight:800;cursor:pointer;
+  box-shadow:0 6px 24px rgba(41,121,255,.45);display:flex;align-items:center;
+  justify-content:center;gap:10px;width:100%;max-width:420px;
+  transition:transform .15s,box-shadow .15s;}
+#find-btn:active{transform:scale(.97);box-shadow:0 3px 12px rgba(41,121,255,.3);}
+#ctrl-row{display:flex;gap:10px;width:100%;max-width:420px;}
+.cw{flex:1;position:relative;}
+.ctrl{width:100%;padding:12px 6px;border-radius:18px;border:none;background:var(--bg);
+  color:var(--text);font-size:12px;font-weight:600;cursor:pointer;
+  box-shadow:0 3px 14px var(--shadow);display:flex;flex-direction:column;
+  align-items:center;gap:5px;transition:transform .15s;}
+.ctrl:active{transform:scale(.92);}
+.ctrl .ico{font-size:22px;}
+.nbadge{position:absolute;top:-5px;right:-5px;background:var(--accent);color:#fff;
+  border-radius:50%;width:20px;height:20px;font-size:11px;font-weight:700;
+  display:none;align-items:center;justify-content:center;border:2px solid var(--bg);}
+
+/* ── BOTTOM SHEET ── */
+#sheet{position:fixed;bottom:0;left:0;right:0;z-index:1000;background:var(--sheet);
+  border-radius:26px 26px 0 0;box-shadow:0 -6px 36px var(--shadow);
+  transform:translateY(100%);transition:transform .38s cubic-bezier(.32,.72,0,1);
+  max-height:90dvh;display:flex;flex-direction:column;}
+#sheet.open{transform:translateY(0);}
+.sh-handle{width:42px;height:4px;background:var(--bg3);border-radius:2px;
+  margin:14px auto 0;flex-shrink:0;}
+#sh-close{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;
+  border:none;background:var(--bg3);color:var(--text2);font-size:14px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;}
+
+/* Tabs */
+#sh-tabs{display:flex;border-bottom:1px solid var(--bg3);margin-top:14px;flex-shrink:0;padding:0 20px;}
+.sh-tab{flex:1;padding:10px 0;font-size:14px;font-weight:700;border:none;background:none;
+  color:var(--text2);cursor:pointer;border-bottom:2.5px solid transparent;
+  transition:all .2s;margin-bottom:-1px;}
+.sh-tab.on{color:var(--accent);border-bottom-color:var(--accent);}
+
+/* Tab panes */
+#sh-body{overflow-y:auto;padding:18px 20px 36px;flex:1;}
+.sh-pane{display:none;}
+.sh-pane.on{display:block;}
+
+/* Sheet – Info pane */
+#sh-type{display:inline-flex;align-items:center;gap:6px;
+  font-size:11px;font-weight:700;padding:4px 11px;border-radius:10px;margin-bottom:8px;}
+.t-pub{background:var(--accent-l);color:var(--accent);}
+.t-sec{background:var(--yellow-l);color:#a06000;}
+.t-beta{background:#fce4ec;color:#c62828;margin-left:4px;border-radius:8px;
+  padding:2px 8px;font-size:10px;}
+#sh-name{font-size:20px;font-weight:800;margin-bottom:4px;line-height:1.3;}
+#sh-meta{font-size:13px;color:var(--text2);margin-bottom:14px;}
+.r-row{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
+.stars-disp{font-size:16px;}
+.r-num{font-weight:800;font-size:16px;}
+.r-cnt{color:var(--text2);font-size:13px;}
+.cl-lbl{font-size:12px;color:var(--text2);font-weight:600;margin-bottom:5px;}
+.cl-bar{background:var(--bg3);border-radius:8px;height:9px;margin-bottom:16px;overflow:hidden;}
+.cl-fill{height:100%;border-radius:8px;transition:width .6s ease;}
+#sh-tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;}
+.tag{padding:5px 13px;border-radius:13px;font-size:12px;font-weight:600;}
+.t-blue{background:var(--accent-l);color:var(--accent);}
+.t-green{background:#e8f5e9;color:#2e7d32;}
+.t-gray{background:var(--bg3);color:var(--text2);}
+.dark .t-green{background:#0d2a12;color:#6fcf7a;}
+
+#sh-secret{display:none;background:var(--yellow-l);border:1.5px solid rgba(255,193,7,.3);
+  border-radius:16px;padding:16px;margin-bottom:18px;}
+#sh-secret h4{font-size:14px;margin-bottom:4px;}
+#sh-secret p{font-size:12px;color:var(--text2);margin-bottom:12px;}
+#sec-loc{font-size:13px;color:var(--text2);margin-top:8px;}
+
+#sh-acts{display:flex;gap:10px;margin-top:4px;}
+.sh-btn{flex:1;padding:15px;border-radius:16px;border:none;font-size:14px;font-weight:700;
+  cursor:pointer;transition:opacity .2s,transform .15s;}
+.sh-btn:active{transform:scale(.96);opacity:.85;}
+.sh-pri{background:var(--accent);color:#fff;}
+.sh-sec{background:var(--bg3);color:var(--text);}
+
+/* ── REVIEW PANE ── */
+#review-form-wrap{background:var(--bg2);border-radius:18px;padding:16px;margin-bottom:20px;}
+#review-form-wrap h4{font-size:15px;font-weight:700;margin-bottom:14px;}
+
+/* Star picker */
+#star-pick{display:flex;gap:6px;margin-bottom:14px;}
+.sp{font-size:32px;cursor:pointer;transition:transform .15s;user-select:none;line-height:1;}
+.sp:hover{transform:scale(1.15);}
+.sp.lit{filter:none;}
+.sp.dim{filter:grayscale(1) opacity(.4);}
+
+#rev-text{width:100%;min-height:90px;padding:12px 14px;border-radius:14px;border:1.5px solid var(--bg3);
+  background:var(--bg);color:var(--text);font-size:14px;resize:none;outline:none;
+  font-family:inherit;transition:border-color .2s;}
+#rev-text:focus{border-color:var(--accent);}
+#rev-text::placeholder{color:var(--text3);}
+
+#photo-row{display:flex;align-items:center;gap:10px;margin-top:10px;}
+#photo-label{display:flex;align-items:center;gap:6px;padding:9px 14px;border-radius:12px;
+  background:var(--bg3);color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;
+  transition:background .2s;}
+#photo-label:hover{background:var(--bg3);}
+#photo-input{display:none;}
+#photo-name{font-size:12px;color:var(--text3);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+#photo-preview{display:none;margin-top:10px;border-radius:12px;overflow:hidden;max-height:160px;}
+#photo-preview img{width:100%;object-fit:cover;}
+
+#rev-submit{width:100%;margin-top:12px;padding:14px;border-radius:14px;border:none;
+  background:var(--accent);color:#fff;font-size:15px;font-weight:700;cursor:pointer;
+  transition:opacity .2s,transform .15s;}
+#rev-submit:active{transform:scale(.97);opacity:.85;}
+#rev-err{color:var(--red);font-size:12px;margin-top:6px;display:none;}
+
+/* Review cards */
+#rev-list h4{font-size:14px;font-weight:700;color:var(--text2);margin-bottom:12px;}
+.rev-card{background:var(--bg2);border-radius:16px;padding:14px;margin-bottom:10px;}
+.rc-top{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.rc-avatar{width:36px;height:36px;border-radius:50%;background:var(--bg3);
+  display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.rc-info{flex:1;}
+.rc-nick{font-size:13px;font-weight:700;}
+.rc-date{font-size:11px;color:var(--text3);}
+.rc-stars{font-size:13px;color:var(--yellow);}
+.rc-text{font-size:13px;color:var(--text);line-height:1.6;}
+.rc-photo{margin-top:8px;border-radius:10px;overflow:hidden;max-height:120px;}
+.rc-photo img{width:100%;object-fit:cover;}
+#no-rev{text-align:center;padding:32px 0;color:var(--text3);font-size:14px;}
+
+/* ── TOP 3 PANEL ── */
+#p-back{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1050;}
+#p-back.open{display:block;}
+#saved-panel{position:fixed;top:50%;right:0;transform:translateY(-50%) translateX(110%);z-index:1060;
+  background:var(--sheet);border-radius:26px 0 0 26px;box-shadow:-6px 0 36px var(--shadow);
+  padding:24px 18px;width:min(88vw,370px);max-height:80dvh;overflow-y:auto;
+  transition:transform .38s cubic-bezier(.32,.72,0,1);}
+#saved-panel.open{transform:translateY(-50%) translateX(0);}
+#saved-panel h3{font-size:17px;font-weight:800;margin-bottom:18px;
+  display:flex;justify-content:space-between;align-items:center;}
+.saved-item{display:flex;align-items:center;gap:12px;padding:13px 0;
+  border-bottom:1px solid var(--bg3);cursor:pointer;}
+.saved-item:last-child{border-bottom:none;}
+.saved-num{width:32px;height:32px;border-radius:50%;background:var(--green);color:#fff;
+  font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.saved-info{flex:1;}
+.saved-info .sn{font-size:14px;font-weight:700;margin-bottom:3px;}
+.saved-info .sm{font-size:12px;color:var(--text2);}
+.saved-del{border:none;background:var(--bg3);color:var(--text2);width:28px;height:28px;
+  border-radius:50%;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+#top3{position:fixed;top:50%;left:0;transform:translateY(-50%) translateX(-110%);z-index:1060;
+  background:var(--sheet);border-radius:0 26px 26px 0;box-shadow:6px 0 36px var(--shadow);
+  padding:24px 18px;width:min(88vw,370px);transition:transform .38s cubic-bezier(.32,.72,0,1);}
+#top3.open{transform:translateY(-50%) translateX(0);}
+#top3 h3{font-size:17px;font-weight:800;margin-bottom:18px;
+  display:flex;justify-content:space-between;align-items:center;}
+#top3-x{border:none;background:none;color:var(--text2);font-size:22px;cursor:pointer;}
+.t3{display:flex;align-items:center;gap:13px;padding:13px 0;
+  border-bottom:1px solid var(--bg3);cursor:pointer;}
+.t3:last-child{border-bottom:none;}
+.t3-rank{width:32px;height:32px;border-radius:50%;color:#fff;font-size:14px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.rk1{background:var(--yellow);color:#5a3800;}
+.rk2{background:#9e9e9e;}
+.rk3{background:#b87333;}
+.t3-info .tn{font-size:14px;font-weight:700;margin-bottom:3px;}
+.t3-info .tm{font-size:12px;color:var(--text2);}
+
+/* ── REGISTER MODAL ── */
+#reg-overlay,#modal-overlay{display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,.55);z-index:2000;align-items:center;justify-content:center;padding:16px;}
+#reg-overlay.open,#modal-overlay.open{display:flex;}
+.modal-box{background:var(--sheet);border-radius:28px;padding:28px 22px 22px;
+  width:100%;max-width:360px;box-shadow:0 8px 40px var(--shadow);}
+.modal-box h3{font-size:19px;font-weight:800;margin-bottom:6px;}
+.modal-box .m-sub{font-size:14px;color:var(--text2);margin-bottom:20px;line-height:1.5;}
+.m-field{margin-bottom:14px;}
+.m-field label{font-size:12px;font-weight:700;color:var(--text2);display:block;margin-bottom:6px;}
+.m-input{width:100%;padding:12px 14px;border-radius:14px;border:1.5px solid var(--bg3);
+  background:var(--bg);color:var(--text);font-size:14px;outline:none;font-family:inherit;
+  transition:border-color .2s;}
+.m-input:focus{border-color:var(--accent);}
+.m-select{appearance:none;cursor:pointer;}
+.m-row{display:flex;gap:10px;}
+.m-row .m-field{flex:1;}
+.m-btn{width:100%;padding:15px;border-radius:16px;border:none;font-size:15px;font-weight:700;
+  cursor:pointer;margin-top:8px;transition:opacity .2s,transform .15s;}
+.m-btn:active{transform:scale(.97);opacity:.85;}
+.m-pri{background:var(--accent);color:#fff;}
+.m-sec{background:var(--bg3);color:var(--text);}
+
+/* Coin modal specific */
+#modal-box{text-align:center;}
+#modal-box .m-ico{font-size:42px;margin-bottom:12px;}
+#pw-reveal{display:none;background:var(--accent-l);border-radius:16px;
+  padding:20px;margin-bottom:16px;}
+#pw-val{font-size:38px;font-weight:900;color:var(--accent);letter-spacing:10px;}
+#pw-loc{font-size:13px;color:var(--text2);margin-top:8px;}
+
+/* ── GPS BANNER ── */
+#gps-banner{position:fixed;top:0;left:0;right:0;background:#ff5722;color:#fff;
+  text-align:center;padding:10px 16px;font-size:13px;font-weight:600;z-index:2500;
+  transform:translateY(-100%);transition:transform .3s;}
+#gps-banner.show{transform:translateY(0);}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:130px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:rgba(20,20,30,.92);color:#fff;padding:12px 22px;border-radius:28px;
+  font-size:14px;font-weight:500;z-index:3000;opacity:0;
+  transition:opacity .25s,transform .25s;white-space:nowrap;pointer-events:none;
+  backdrop-filter:blur(8px);}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ── COIN ANIM ── */
+@keyframes coinPop{0%{transform:scale(1);}50%{transform:scale(1.4);}100%{transform:scale(1);}}
+.coin-pop{animation:coinPop .4s ease;}
+
+/* ── PULSE ── */
+.pulse{width:18px;height:18px;border-radius:50%;background:#2979ff;border:3px solid #fff;
+  box-shadow:0 0 0 0 rgba(41,121,255,.5);animation:pl 2s infinite;}
+@keyframes pl{0%{box-shadow:0 0 0 0 rgba(41,121,255,.5);}
+  70%{box-shadow:0 0 0 16px rgba(41,121,255,0);}100%{box-shadow:0 0 0 0 rgba(41,121,255,0);}}
+
+/* Leaflet overrides */
+.leaflet-control-attribution{font-size:10px!important;background:var(--bg)!important;color:var(--text2)!important;}
+</style>
+</head>
+<body>
+
+<div id="map"></div>
+<div id="gps-banner">⚠️ GPS 신호 없음 — 마지막 확인 위치 기준으로 표시합니다. 지도에서 위치를 직접 선택하세요.</div>
+
+<div id="topbar">
+  <div id="search-row">
+    <div id="search-wrap">
+      <span id="search-icon">🔍</span>
+      <input id="search-input" type="text" placeholder="위치 또는 화장실 검색" autocomplete="off"/>
+      <div id="ac"></div>
+    </div>
+    <div id="coin">🧻 <span id="coin-n">10</span></div>
+    <div id="top-btns">
+      <button class="top-btn" onclick="toggleDark()" id="dark-btn">🌙</button>
+      <button class="top-btn" onclick="openReg()" title="화장실 등록">➕</button>
+    </div>
+  </div>
+  <div id="chips">
+    <button class="chip on"  onclick="setFilter(this,'all')">전체</button>
+    <button class="chip" onclick="setFilter(this,'bidet')">🚿 비데</button>
+    <button class="chip" onclick="setFilter(this,'open24h')">🕐 24시간</button>
+    <button class="chip" onclick="setFilter(this,'disabled')">♿ 장애인용</button>
+    <button class="chip" onclick="setFilter(this,'public')">🔵 공용</button>
+    <button class="chip" onclick="setFilter(this,'secret')">🟡 비밀</button>
+  </div>
+</div>
+
+<div id="legend">
+  <div class="lg"><div class="lg-dot" style="background:#2979ff"></div>공용 화장실</div>
+  <div class="lg"><div class="lg-dot" style="background:#ffc107"></div>비밀 화장실</div>
+  <div class="lg"><div class="lg-dot" style="background:#4caf50"></div>편의점</div>
+</div>
+
+<div id="bot-ctrl">
+  <div id="ctrl-row">
+    <div class="cw">
+      <button class="ctrl" onclick="openTop3()">
+        <span class="ico">🏆</span><span>추천 TOP 3</span>
+      </button>
+    </div>
+    <div class="cw">
+      <button class="ctrl" onclick="centerMe()">
+        <span class="ico">📍</span><span>내 위치</span>
+      </button>
+    </div>
+    <div class="cw">
+      <button class="ctrl" onclick="openSaved()">
+        <span class="ico">💾</span><span>저장됨</span>
+      </button>
+      <div class="nbadge" id="saved-badge"></div>
+    </div>
+  </div>
+  <button id="find-btn" onclick="findNearest()">🚻 가장 가까운 화장실 찾기</button>
+</div>
+
+<div id="sheet">
+  <button id="sh-close" onclick="closeSheet()">✕</button>
+  <div class="sh-handle"></div>
+  <div id="sh-tabs">
+    <button class="sh-tab on" onclick="switchTab(this,'info')">정보</button>
+    <button class="sh-tab" onclick="switchTab(this,'review')">리뷰 <span id="rev-tab-cnt"></span></button>
+  </div>
+  <div id="sh-body">
+
+    <div class="sh-pane on" id="pane-info">
+      <div id="sh-type" class="t-pub">🔵 공용 화장실</div>
+      <div id="sh-name">화장실 이름</div>
+      <div id="sh-meta">📍 거리 계산 중...</div>
+      <div class="r-row">
+        <span class="stars-disp" id="sh-stars">★★★★☆</span>
+        <span class="r-num" id="sh-rating">4.0</span>
+        <span class="r-cnt" id="sh-rcnt">(리뷰 0개)</span>
+      </div>
+      <div class="cl-lbl">청결도 <span id="cl-pct">80%</span></div>
+      <div class="cl-bar"><div class="cl-fill" id="cl-fill"></div></div>
+      <div id="sh-tags"></div>
+      <div id="sh-secret">
+        <div id="sec-locked">
+          <h4>🔒 비밀 화장실 정보</h4>
+          <p>휴지 코인 1개를 사용하여 도어락 비밀번호와 내부 위치를 확인하세요.</p>
+          <button class="sh-btn" style="background:#e6a800;color:#5a3800;border-radius:14px;padding:13px;width:100%;font-size:14px;font-weight:700;border:none;cursor:pointer;" onclick="openCoinModal()">
+            🧻 코인 1개 사용하여 비밀번호 확인
+          </button>
+        </div>
+        <div id="sec-unlocked" style="display:none">
+          <h4 style="margin-bottom:10px;">🔓 비밀번호 (이미 해금됨)</h4>
+          <div style="background:var(--accent-l);border-radius:14px;padding:16px;text-align:center;">
+            <div style="font-size:11px;color:var(--text2);font-weight:700;margin-bottom:8px;">도어락 비밀번호</div>
+            <div id="sec-pw-val" style="font-size:34px;font-weight:900;color:var(--accent);letter-spacing:8px;"></div>
+            <div id="sec-loc" style="font-size:12px;color:var(--text2);margin-top:8px;"></div>
+          </div>
+        </div>
+      </div>
+      <div id="sh-acts">
+        <button class="sh-btn sh-sec" onclick="saveToilet()">💾 저장</button>
+        <button class="sh-btn sh-pri" onclick="getRoute()">🗺️ 길 안내</button>
+      </div>
+      <button id="sh-del-btn" style="display:none;width:100%;margin-top:8px;background:#ffe5e5;
+        color:#d32f2f;border:none;border-radius:14px;padding:13px;font-weight:700;font-size:14px;
+        cursor:pointer;" onclick="deleteDynToilet()">🗑️ 내가 등록한 화장실 삭제</button>
+    </div>
+
+    <div class="sh-pane" id="pane-review">
+
+      <div id="review-form-wrap">
+        <h4>✏️ 리뷰 작성 <span style="font-size:12px;color:var(--text2);font-weight:400">(작성 시 🧻 코인 +1 지급)</span></h4>
+        <div id="star-pick">
+          <span class="sp dim" data-v="1" onclick="pickStar(1)">★</span>
+          <span class="sp dim" data-v="2" onclick="pickStar(2)">★</span>
+          <span class="sp dim" data-v="3" onclick="pickStar(3)">★</span>
+          <span class="sp dim" data-v="4" onclick="pickStar(4)">★</span>
+          <span class="sp dim" data-v="5" onclick="pickStar(5)">★</span>
+        </div>
+        <textarea id="rev-text" placeholder="이 화장실에 대한 솔직한 리뷰를 남겨주세요 (최소 10자)&#10;예: 청결하고 비데도 있어서 좋았어요. 다만 줄이 길 수 있습니다."></textarea>
+        <div id="photo-row">
+          <label id="photo-label" for="photo-input">📷 사진 첨부</label>
+          <input type="file" id="photo-input" accept="image/*" onchange="handlePhoto(this)"/>
+          <span id="photo-name">최대 4MB</span>
+        </div>
+        <div id="photo-preview"><img id="photo-img" src="" alt=""/></div>
+        <div id="rev-err">⚠️ 별점과 리뷰 내용(10자 이상)을 입력해주세요.</div>
+        <button id="rev-submit" onclick="submitReview()">리뷰 등록하기</button>
+      </div>
+
+      <div id="rev-list">
+        <h4>전체 리뷰</h4>
+        <div id="rev-cards"></div>
+      </div>
+    </div>
+
+  </div></div>
+
+<div id="p-back" onclick="closeAllPanels()"></div>
+<div id="top3">
+  <h3>🏆 가까운 화장실 TOP 3 <button id="top3-x" onclick="closeTop3()">✕</button></h3>
+  <div id="t3-list"></div>
+</div>
+
+<div id="saved-panel">
+  <h3>💾 저장된 화장실 <button onclick="closeSaved()" style="border:none;background:none;color:var(--text2);font-size:22px;cursor:pointer;">✕</button></h3>
+  <div id="saved-list"></div>
+</div>
+
+<div id="modal-overlay">
+  <div class="modal-box" id="modal-box">
+    <div class="m-ico" id="m-ico">🔒</div>
+    <h3 id="m-title">비밀번호 확인</h3>
+    <div class="m-sub" id="m-sub">휴지 코인 1개를 사용하면<br>이 화장실의 비밀번호를 확인할 수 있습니다.</div>
+    <div id="pw-reveal">
+      <div style="font-size:12px;color:var(--text2);font-weight:700;margin-bottom:8px;">도어락 비밀번호</div>
+      <div id="pw-val">----</div>
+      <div id="pw-loc"></div>
+    </div>
+    <button class="m-btn m-pri" id="m-act" onclick="useCoin()">🧻 코인 1개 사용</button>
+    <button class="m-btn m-sec" onclick="closeModal()">취소</button>
+  </div>
+</div>
+
+<div id="reg-overlay">
+  <div class="modal-box">
+    <h3>🚻 새 화장실 등록</h3>
+    <div class="m-sub">지도에 없는 화장실을 제보해주세요.<br>검증 후 마커로 표시되며 🧻 코인 +2 지급!</div>
+    <div class="m-field">
+      <label>화장실 이름</label>
+      <input class="m-input" id="reg-name" type="text" placeholder="예: 스타벅스 홍대점 화장실"/>
+    </div>
+    <div class="m-field">
+      <label>주소</label>
+      <input class="m-input" id="reg-addr" type="text" placeholder="예: 서울 마포구 양화로 159"/>
+      <div style="font-size:11px;color:var(--text3);margin-top:5px;line-height:1.5;">
+        📍 입력한 주소는 화장실 정보에 그대로 표시돼요. 단, 지도 위 마커는 <b>현재 내 위치 근처</b>에 추가되니, 등록할 화장실이 있는 곳에서 등록해주세요! (등록 후 마커를 드래그해서 위치를 세밀하게 고칠 수 있습니다.)
+      </div>
+    </div>
+    <div class="m-row">
+      <div class="m-field">
+        <label>종류</label>
+        <select class="m-input m-select" id="reg-type">
+          <option value="public">공용</option>
+          <option value="secret">비밀 (비번 있음)</option>
+        </select>
+      </div>
+      <div class="m-field">
+        <label>위치 (층/위치)</label>
+        <input class="m-input" id="reg-loc" type="text" placeholder="예: 2층 우측"/>
+      </div>
+    </div>
+    <div class="m-row">
+      <div class="m-field">
+        <label>비데 여부</label>
+        <select class="m-input m-select" id="reg-bidet">
+          <option value="0">없음</option>
+          <option value="1">있음</option>
+        </select>
+      </div>
+      <div class="m-field">
+        <label>24시간 개방</label>
+        <select class="m-input m-select" id="reg-open">
+          <option value="0">아니오</option>
+          <option value="1">예</option>
+        </select>
+      </div>
+    </div>
+    <div class="m-field" id="reg-pw-wrap" style="display:none">
+      <label>도어락 비밀번호</label>
+      <input class="m-input" id="reg-pw" type="text" placeholder="예: 1234" maxlength="8"/>
+    </div>
+    <div class="m-field">
+      <label>사진 첨부 (선택, 최대 4MB)</label>
+      <label style="display:flex;align-items:center;gap:8px;padding:10px 14px;
+        border-radius:12px;background:var(--bg3);color:var(--text2);font-size:13px;
+        font-weight:600;cursor:pointer;" for="reg-photo">📷 사진 선택</label>
+      <input type="file" id="reg-photo" accept="image/*" style="display:none" onchange="handleRegPhoto(this)"/>
+      <div id="reg-photo-name" style="font-size:12px;color:var(--text3);margin-top:4px;"></div>
+    </div>
+    <button class="m-btn m-pri" onclick="submitReg()">등록 제출하기</button>
+    <button class="m-btn m-sec" onclick="closeReg()">취소</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// ─── DATA ───────────────────────────────────────────────────
+const DEF = [37.4981, 127.0276];
+
+const TOILETS = [
+  {id:1,  name:"강남역 2번 출구 공중화장실",  lat:37.4984,lng:127.0260,type:"public", rating:4.2,reviews:38,bidet:true, open24h:true, disabled:true, clean:85,stalls:6, loc:"지하 1층"},
+  // ── 강남구 ──
+  {id:2,  name:"강남구청 공중화장실",           lat:37.5172,lng:127.0473,type:"public", rating:3.8,reviews:14,bidet:false,open24h:false,disabled:true, clean:72,stalls:4, loc:"1층"},
+  {id:3,  name:"코엑스몰 B1 화장실",            lat:37.5115,lng:127.0595,type:"public", rating:4.5,reviews:62,bidet:true, open24h:false,disabled:true, clean:92,stalls:8, loc:"지하 1층 A관"},
+  {id:4,  name:"스타벅스 강남R점 화장실",       lat:37.4992,lng:127.0285,type:"secret",rating:4.0,reviews:7, bidet:true, open24h:false,disabled:false,clean:88,stalls:2, loc:"2층 좌측",    pw:"2301"},
+  {id:5,  name:"선릉역 공중화장실",             lat:37.5045,lng:127.0493,type:"public", rating:3.5,reviews:21,bidet:false,open24h:true, disabled:false,clean:68,stalls:3, loc:"지하 1층"},
+  {id:6,  name:"맥도날드 강남점 화장실",        lat:37.4973,lng:127.0297,type:"secret",rating:3.2,reviews:5, bidet:false,open24h:false,disabled:false,clean:65,stalls:2, loc:"3층",        pw:"0000"},
+  {id:7,  name:"삼성역 공중화장실",             lat:37.5088,lng:127.0632,type:"public", rating:4.1,reviews:29,bidet:true, open24h:true, disabled:true, clean:80,stalls:5, loc:"지하 1층"},
+  {id:8,  name:"역삼동 근린공원 화장실",        lat:37.5007,lng:127.0342,type:"public", rating:3.0,reviews:9, bidet:false,open24h:false,disabled:false,clean:55,stalls:2, loc:"공원 내"},
+  {id:9,  name:"파리바게트 테헤란로점 화장실",  lat:37.5023,lng:127.0389,type:"secret",rating:3.8,reviews:4, bidet:false,open24h:false,disabled:false,clean:75,stalls:1, loc:"지하 1층",   pw:"1357"},
+  {id:10, name:"테헤란로 공공화장실",           lat:37.5063,lng:127.0451,type:"public", rating:4.3,reviews:33,bidet:true, open24h:true, disabled:true, clean:87,stalls:6, loc:"지상 1층", beta:true},
+  {id:11, name:"압구정로데오역 화장실",         lat:37.5278,lng:127.0400,type:"public", rating:3.9,reviews:17,bidet:false,open24h:false,disabled:true, clean:70,stalls:3, loc:"지하 1층"},
+  {id:12, name:"신논현역 공중화장실",           lat:37.5048,lng:127.0253,type:"public", rating:4.0,reviews:22,bidet:true, open24h:true, disabled:false,clean:82,stalls:4, loc:"지하 1층"},
+  {id:13, name:"학동역 공중화장실",             lat:37.5196,lng:127.0338,type:"public", rating:3.7,reviews:11,bidet:false,open24h:false,disabled:true, clean:71,stalls:3, loc:"지하 1층"},
+  {id:14, name:"도산공원 공중화장실",           lat:37.5253,lng:127.0380,type:"public", rating:4.2,reviews:18,bidet:false,open24h:true, disabled:true, clean:78,stalls:4, loc:"공원 내"},
+  {id:15, name:"대치동 은마상가 화장실",        lat:37.4938,lng:127.0618,type:"secret",rating:3.5,reviews:6, bidet:false,open24h:false,disabled:false,clean:60,stalls:2, loc:"지하 1층",   pw:"4567"},
+  // ── 서초구 ──
+  {id:16, name:"교대역 공중화장실",             lat:37.4934,lng:127.0142,type:"public", rating:3.9,reviews:24,bidet:false,open24h:true, disabled:true, clean:74,stalls:4, loc:"지하 1층"},
+  {id:17, name:"서초구청 공중화장실",           lat:37.4836,lng:127.0325,type:"public", rating:4.0,reviews:12,bidet:true, open24h:false,disabled:true, clean:81,stalls:5, loc:"1층"},
+  {id:18, name:"사당역 공중화장실",             lat:37.4766,lng:126.9817,type:"public", rating:3.6,reviews:19,bidet:false,open24h:true, disabled:false,clean:67,stalls:3, loc:"지하 1층"},
+  {id:19, name:"반포한강공원 화장실",           lat:37.5089,lng:126.9944,type:"public", rating:4.4,reviews:41,bidet:false,open24h:true, disabled:true, clean:85,stalls:6, loc:"공원 내"},
+  {id:20, name:"방배역 공중화장실",             lat:37.4815,lng:126.9974,type:"public", rating:3.8,reviews:8, bidet:false,open24h:false,disabled:false,clean:69,stalls:2, loc:"지하 1층"},
+  // ── 마포구 ──
+  {id:21, name:"홍대입구역 공중화장실",         lat:37.5573,lng:126.9245,type:"public", rating:4.0,reviews:53,bidet:false,open24h:true, disabled:true, clean:76,stalls:5, loc:"지하 1층"},
+  {id:22, name:"합정역 공중화장실",             lat:37.5497,lng:126.9147,type:"public", rating:3.9,reviews:27,bidet:false,open24h:true, disabled:true, clean:72,stalls:4, loc:"지하 1층"},
+  {id:23, name:"망원한강공원 화장실",           lat:37.5546,lng:126.9003,type:"public", rating:4.3,reviews:36,bidet:false,open24h:true, disabled:true, clean:82,stalls:6, loc:"공원 내"},
+  {id:24, name:"연남동 경의선숲길 화장실",      lat:37.5625,lng:126.9269,type:"public", rating:4.1,reviews:22,bidet:false,open24h:true, disabled:false,clean:79,stalls:3, loc:"경의선숲길"},
+  {id:25, name:"카페 홍대점 화장실",            lat:37.5580,lng:126.9220,type:"secret",rating:3.8,reviews:9, bidet:false,open24h:false,disabled:false,clean:72,stalls:1, loc:"2층",        pw:"8282"},
+  // ── 종로구 ──
+  {id:26, name:"광화문광장 공중화장실",         lat:37.5752,lng:126.9769,type:"public", rating:4.2,reviews:47,bidet:false,open24h:true, disabled:true, clean:83,stalls:6, loc:"광장 내"},
+  {id:27, name:"경복궁역 공중화장실",           lat:37.5759,lng:126.9720,type:"public", rating:4.0,reviews:31,bidet:false,open24h:false,disabled:true, clean:78,stalls:4, loc:"지하 1층"},
+  {id:28, name:"인사동 공중화장실",             lat:37.5740,lng:126.9849,type:"public", rating:3.7,reviews:25,bidet:false,open24h:true, disabled:false,clean:70,stalls:3, loc:"지상 1층"},
+  {id:29, name:"종로3가역 공중화장실",          lat:37.5706,lng:126.9918,type:"public", rating:3.5,reviews:18,bidet:false,open24h:true, disabled:true, clean:65,stalls:4, loc:"지하 1층"},
+  {id:30, name:"창덕궁 앞 공중화장실",          lat:37.5796,lng:126.9910,type:"public", rating:4.1,reviews:14,bidet:false,open24h:false,disabled:true, clean:80,stalls:3, loc:"궁 앞"},
+  // ── 중구 ──
+  {id:31, name:"명동역 공중화장실",             lat:37.5636,lng:126.9847,type:"public", rating:3.8,reviews:39,bidet:false,open24h:true, disabled:true, clean:72,stalls:5, loc:"지하 1층"},
+  {id:32, name:"동대문역사문화공원 화장실",     lat:37.5651,lng:127.0095,type:"public", rating:4.0,reviews:28,bidet:false,open24h:true, disabled:true, clean:77,stalls:6, loc:"공원 내"},
+  {id:33, name:"을지로입구역 공중화장실",       lat:37.5659,lng:126.9824,type:"public", rating:3.6,reviews:16,bidet:false,open24h:true, disabled:false,clean:68,stalls:3, loc:"지하 1층"},
+  {id:34, name:"남대문시장 공중화장실",         lat:37.5594,lng:126.9769,type:"public", rating:3.3,reviews:22,bidet:false,open24h:false,disabled:false,clean:58,stalls:4, loc:"시장 내"},
+  // ── 용산구 ──
+  {id:35, name:"이태원역 공중화장실",           lat:37.5347,lng:126.9947,type:"public", rating:3.9,reviews:31,bidet:false,open24h:true, disabled:true, clean:73,stalls:4, loc:"지하 1층"},
+  {id:36, name:"용산역 공중화장실",             lat:37.5297,lng:126.9651,type:"public", rating:4.1,reviews:24,bidet:true, open24h:true, disabled:true, clean:82,stalls:5, loc:"역사 내"},
+  {id:37, name:"한강공원 이촌지구 화장실",      lat:37.5231,lng:126.9681,type:"public", rating:4.3,reviews:38,bidet:false,open24h:true, disabled:true, clean:84,stalls:6, loc:"공원 내"},
+  {id:38, name:"경리단길 공중화장실",           lat:37.5378,lng:127.0002,type:"public", rating:3.5,reviews:10,bidet:false,open24h:false,disabled:false,clean:65,stalls:2, loc:"지상 1층"},
+  // ── 성동구 / 광진구 ──
+  {id:39, name:"성수역 공중화장실",             lat:37.5447,lng:127.0567,type:"public", rating:4.2,reviews:33,bidet:false,open24h:true, disabled:true, clean:80,stalls:4, loc:"지하 1층"},
+  {id:40, name:"건대입구역 공중화장실",         lat:37.5402,lng:127.0697,type:"public", rating:3.8,reviews:26,bidet:false,open24h:true, disabled:true, clean:73,stalls:5, loc:"지하 1층"},
+  {id:41, name:"뚝섬한강공원 화장실",           lat:37.5283,lng:127.0656,type:"public", rating:4.4,reviews:42,bidet:false,open24h:true, disabled:true, clean:86,stalls:6, loc:"공원 내"},
+  {id:42, name:"어린이대공원역 화장실",         lat:37.5483,lng:127.0734,type:"public", rating:3.7,reviews:15,bidet:false,open24h:false,disabled:true, clean:70,stalls:3, loc:"지하 1층"},
+  // ── 송파구 ──
+  {id:43, name:"잠실역 공중화장실",             lat:37.5133,lng:127.1001,type:"public", rating:4.0,reviews:45,bidet:false,open24h:true, disabled:true, clean:78,stalls:6, loc:"지하 1층"},
+  {id:44, name:"올림픽공원 화장실(동문)",       lat:37.5215,lng:127.1229,type:"public", rating:4.5,reviews:52,bidet:true, open24h:false,disabled:true, clean:91,stalls:8, loc:"동문 근처"},
+  {id:45, name:"잠실한강공원 화장실",           lat:37.5155,lng:127.0845,type:"public", rating:4.2,reviews:29,bidet:false,open24h:true, disabled:true, clean:81,stalls:5, loc:"공원 내"},
+  {id:46, name:"석촌호수 공중화장실",           lat:37.5090,lng:127.1001,type:"public", rating:3.9,reviews:20,bidet:false,open24h:true, disabled:false,clean:74,stalls:3, loc:"호수 서쪽"},
+  {id:47, name:"롯데월드몰 화장실",             lat:37.5123,lng:127.1022,type:"secret",rating:4.3,reviews:18,bidet:true, open24h:false,disabled:true, clean:90,stalls:6, loc:"B1층",        pw:"1004"},
+  // ── 영등포구 / 여의도 ──
+  {id:48, name:"여의도한강공원 화장실(북측)",   lat:37.5280,lng:126.9337,type:"public", rating:4.4,reviews:58,bidet:false,open24h:true, disabled:true, clean:87,stalls:7, loc:"공원 내"},
+  {id:49, name:"영등포역 공중화장실",           lat:37.5159,lng:126.9077,type:"public", rating:3.7,reviews:23,bidet:false,open24h:true, disabled:true, clean:70,stalls:5, loc:"역사 내"},
+  {id:50, name:"여의도공원 화장실",             lat:37.5243,lng:126.9245,type:"public", rating:4.1,reviews:30,bidet:false,open24h:true, disabled:true, clean:80,stalls:4, loc:"공원 내"},
+  {id:51, name:"당산역 공중화장실",             lat:37.5338,lng:126.9000,type:"public", rating:3.6,reviews:14,bidet:false,open24h:true, disabled:false,clean:66,stalls:3, loc:"지하 1층"},
+  // ── 은평구 / 서대문구 ──
+  {id:52, name:"신촌역 공중화장실",             lat:37.5553,lng:126.9367,type:"public", rating:3.8,reviews:28,bidet:false,open24h:true, disabled:true, clean:72,stalls:4, loc:"지하 1층"},
+  {id:53, name:"연세로 공중화장실",             lat:37.5584,lng:126.9387,type:"public", rating:3.6,reviews:17,bidet:false,open24h:false,disabled:false,clean:67,stalls:3, loc:"지상 1층"},
+  {id:54, name:"불광천 공중화장실",             lat:37.6018,lng:126.9310,type:"public", rating:4.0,reviews:12,bidet:false,open24h:true, disabled:true, clean:76,stalls:4, loc:"천변"},
+  // ── 동작구 / 관악구 ──
+  {id:55, name:"노량진역 공중화장실",           lat:37.5134,lng:126.9423,type:"public", rating:3.5,reviews:19,bidet:false,open24h:true, disabled:false,clean:64,stalls:3, loc:"지하 1층"},
+  {id:56, name:"보라매공원 화장실",             lat:37.4939,lng:126.9177,type:"public", rating:4.2,reviews:25,bidet:false,open24h:true, disabled:true, clean:82,stalls:5, loc:"공원 내"},
+  {id:57, name:"서울대입구역 공중화장실",       lat:37.4813,lng:126.9527,type:"public", rating:3.7,reviews:21,bidet:false,open24h:true, disabled:true, clean:70,stalls:4, loc:"지하 1층"},
+  // ── 노원구 / 도봉구 ──
+  {id:58, name:"노원역 공중화장실",             lat:37.6554,lng:127.0561,type:"public", rating:3.9,reviews:18,bidet:false,open24h:true, disabled:true, clean:74,stalls:4, loc:"지하 1층"},
+  {id:59, name:"수락산역 공중화장실",           lat:37.6711,lng:127.0642,type:"public", rating:3.6,reviews:9, bidet:false,open24h:false,disabled:false,clean:65,stalls:2, loc:"지하 1층"},
+  {id:60, name:"도봉산역 공중화장실",           lat:37.6889,lng:127.0459,type:"public", rating:4.0,reviews:14,bidet:false,open24h:true, disabled:true, clean:77,stalls:3, loc:"지하 1층"},
+  // ── 강서구 / 양천구 ──
+  {id:61, name:"발산역 공중화장실",             lat:37.5589,lng:126.8383,type:"public", rating:3.8,reviews:13,bidet:false,open24h:true, disabled:true, clean:73,stalls:3, loc:"지하 1층"},
+  {id:62, name:"개화산역 공중화장실",           lat:37.5703,lng:126.8076,type:"public", rating:3.5,reviews:8, bidet:false,open24h:false,disabled:false,clean:62,stalls:2, loc:"지하 1층"},
+  {id:63, name:"목동 한강공원 화장실",          lat:37.5390,lng:126.8642,type:"public", rating:4.1,reviews:22,bidet:false,open24h:true, disabled:true, clean:80,stalls:4, loc:"공원 내"},
+  // ── 동대문구 / 성북구 ──
+  {id:64, name:"동대문역 공중화장실",           lat:37.5717,lng:127.0096,type:"public", rating:3.6,reviews:20,bidet:false,open24h:true, disabled:false,clean:67,stalls:4, loc:"지하 1층"},
+  {id:65, name:"혜화역 공중화장실",             lat:37.5825,lng:127.0017,type:"public", rating:3.9,reviews:16,bidet:false,open24h:false,disabled:true, clean:73,stalls:3, loc:"지하 1층"},
+  {id:66, name:"성신여대입구역 공중화장실",     lat:37.5926,lng:127.0165,type:"public", rating:3.7,reviews:11,bidet:false,open24h:true, disabled:false,clean:69,stalls:3, loc:"지하 1층"},
+  // ── 강동구 ──
+  {id:67, name:"천호역 공중화장실",             lat:37.5386,lng:127.1236,type:"public", rating:3.8,reviews:17,bidet:false,open24h:true, disabled:true, clean:71,stalls:4, loc:"지하 1층"},
+  {id:68, name:"암사역 공중화장실",             lat:37.5518,lng:127.1375,type:"public", rating:3.5,reviews:9, bidet:false,open24h:false,disabled:false,clean:64,stalls:2, loc:"지하 1층"},
+  {id:69, name:"고덕천 공중화장실",             lat:37.5553,lng:127.1549,type:"public", rating:4.0,reviews:13,bidet:false,open24h:true, disabled:true, clean:78,stalls:3, loc:"천변"},
+  // ── 광진구 (어린이대공원·세종대 근처) ──
+  {id:70, name:"어린이대공원 정문 화장실",       lat:37.5491,lng:127.0764,type:"public", rating:4.1,reviews:27,bidet:false,open24h:false,disabled:true, clean:80,stalls:4, loc:"정문 입구", addr:"서울 광진구 능동로 216"},
+  {id:71, name:"어린이대공원 분수대 화장실",     lat:37.5500,lng:127.0781,type:"public", rating:3.9,reviews:18,bidet:false,open24h:false,disabled:false,clean:75,stalls:3, loc:"분수대 옆", addr:"서울 광진구 능동로 216"},
+  {id:72, name:"어린이대공원역 공중화장실",      lat:37.5479,lng:127.0745,type:"public", rating:3.7,reviews:22,bidet:false,open24h:true, disabled:true, clean:71,stalls:3, loc:"지하 1층", addr:"서울 광진구 능동로 197-1"},
+  {id:73, name:"어린이회관입구 공중화장실",      lat:37.5472,lng:127.0783,type:"public", rating:3.6,reviews:14,bidet:false,open24h:false,disabled:false,clean:68,stalls:2, loc:"입구 앞", addr:"서울 광진구 광나루로 441"},
+  {id:74, name:"어린이대공원 중앙로 화장실",     lat:37.5489,lng:127.0796,type:"public", rating:4.0,reviews:16,bidet:false,open24h:false,disabled:true, clean:77,stalls:4, loc:"중앙 광장 근처", addr:"서울 광진구 능동로 216"},
+  {id:75, name:"광진광장주차장 공중화장실",      lat:37.5477,lng:127.0732,type:"public", rating:3.8,reviews:11,bidet:false,open24h:true, disabled:true, clean:73,stalls:3, loc:"주차장 1층", addr:"서울 광진구 광나루로 389"},
+  {id:76, name:"어린이대공원 숲속무대 화장실1",  lat:37.5496,lng:127.0802,type:"public", rating:4.2,reviews:9, bidet:false,open24h:false,disabled:false,clean:78,stalls:2, loc:"숲속무대 근처", addr:"서울 광진구 능동로 216"},
+  {id:77, name:"어린이대공원 숲속무대 화장실2",  lat:37.5498,lng:127.0808,type:"public", rating:4.0,reviews:7, bidet:false,open24h:false,disabled:false,clean:76,stalls:2, loc:"숲속무대 동쪽", addr:"서울 광진구 능동로 216"},
+  {id:78, name:"세종대학교 인근 공중화장실",     lat:37.5542,lng:127.0782,type:"public", rating:3.5,reviews:12,bidet:false,open24h:false,disabled:false,clean:65,stalls:2, loc:"원광빌딩 앞", addr:"서울 광진구 능동로 272"},
+  {id:79, name:"어린이대공원 북측 화장실",       lat:37.5512,lng:127.0811,type:"public", rating:3.8,reviews:8, bidet:false,open24h:false,disabled:true, clean:72,stalls:3, loc:"북문 방면", addr:"서울 광진구 능동로 216"},
+];
+
+const STORES = [
+  {name:"GS25 강남역점",    lat:37.4988,lng:127.0270},
+  {name:"CU 역삼테헤란점",  lat:37.4993,lng:127.0308},
+  {name:"세븐일레븐 선릉점",lat:37.5039,lng:127.0478},
+  {name:"GS25 삼성코엑스점",lat:37.5082,lng:127.0618},
+  {name:"미니스톱 강남점",  lat:37.4976,lng:127.0248},
+];
+
+const AC_BASE = [
+  "강남역","선릉역","삼성역 코엑스","역삼역","압구정로데오역","학동역","도산공원","신논현역",
+  "교대역","서초구청","사당역","반포한강공원","방배역",
+  "홍대입구역","합정역","망원한강공원","연남동 경의선숲길",
+  "광화문광장","경복궁역","인사동","종로3가역","창덕궁",
+  "명동역","동대문역사문화공원","을지로입구역","남대문시장",
+  "이태원역","용산역","한강공원 이촌지구","경리단길",
+  "성수역","건대입구역","뚝섬한강공원","어린이대공원역",
+  "잠실역","올림픽공원","잠실한강공원","석촌호수","롯데월드몰",
+  "여의도한강공원","영등포역","여의도공원","당산역",
+  "신촌역","연세로","불광천",
+  "노량진역","보라매공원","서울대입구역",
+  "노원역","수락산역","도봉산역",
+  "발산역","목동 한강공원",
+  "동대문역","혜화역","성신여대입구역",
+  "천호역","암사역","고덕천",
+];
+const AVATARS = ["🐱","🐶","🦊","🐼","🐨","🐸","🦁","🐯","🦝","🐺","🦄","🐻"];
+const NICK_ADJ = ["깔끔한","소심한","용감한","꼼꼼한","급한","여유로운","예민한","대담한"];
+const NICK_NOUN= ["여행자","탐험가","방랑자","산책러","도시인","나그네"];
+
+// ─── SAMPLE REVIEWS ──────────────────────────────────────────
+const SAMPLE_REVIEWS = {
+  "1": [
+    {stars:5,text:"강남역 바로 옆이라 접근성이 최고예요! 넓고 깨끗하고 비데도 잘 됩니다. 급할 때 진짜 구세주같은 곳이에요.",photo:null,date:"2025.06.01",nick:"꼼꼼한 탐험가",avatar:"🐼"},
+    {stars:4,text:"24시간 개방이라 야간에도 사용 가능해서 좋아요. 다만 주말 저녁엔 사람이 많아서 줄을 좀 서야 할 수도 있어요.",photo:null,date:"2025.05.28",nick:"여유로운 도시인",avatar:"🦊"},
+    {stars:4,text:"환기가 잘 되고 청결 상태 양호. 직원이 자주 청소하러 오는 것 같더라고요. 강남역 이용 시 꼭 들르는 곳!",photo:null,date:"2025.05.15",nick:"대담한 여행자",avatar:"🐱"},
+  ],
+  "3": [
+    {stars:5,text:"코엑스 안에 있어서 시설이 정말 좋아요. 비데는 기본이고 환기도 잘 되고, 화장대까지 있어서 완벽합니다.",photo:null,date:"2025.06.02",nick:"깔끔한 방랑자",avatar:"🦄"},
+    {stars:5,text:"쇼핑 중간에 들렀는데 너무 깨끗해서 감동받았어요. 손 세정제도 구비되어 있고 전반적으로 고급스러운 느낌.",photo:null,date:"2025.05.20",nick:"예민한 산책러",avatar:"🐨"},
+    {stars:4,text:"칸 수가 많아서 기다리지 않아도 됩니다. 조금 안쪽에 있어서 처음엔 찾기 어려울 수 있어요.",photo:null,date:"2025.04.30",nick:"소심한 나그네",avatar:"🐶"},
+  ],
+  "4": [
+    {stars:4,text:"비밀번호 맞게 들어갔더니 생각보다 깔끔했어요. 비데도 있고 1인용이라 아늑한 느낌. 코인 쓸 만한 가치 있어요!",photo:null,date:"2025.06.03",nick:"용감한 탐험가",avatar:"🐯"},
+    {stars:4,text:"스타벅스 음료 시키고 물어봐도 알려줘요 ㅎㅎ 그냥 코인으로 확인하면 더 편하고 깔끔합니다.",photo:null,date:"2025.05.10",nick:"급한 도시인",avatar:"🦝"},
+  ],
+  "5": [
+    {stars:3,text:"24시간 개방이라는 점은 좋은데, 새벽엔 청결 상태가 좀 떨어져요. 낮에는 나쁘지 않습니다.",photo:null,date:"2025.05.25",nick:"꼼꼼한 여행자",avatar:"🐸"},
+    {stars:4,text:"선릉역 바로 안에 있어서 찾기 쉬워요. 붐비는 출퇴근 시간엔 좀 지저분할 수 있지만 전반적으로 괜찮아요.",photo:null,date:"2025.05.18",nick:"여유로운 방랑자",avatar:"🦁"},
+  ],
+  "7": [
+    {stars:4,text:"삼성역 코엑스 방면 출구 쪽이라 위치 좋아요. 24시간이고 장애인 시설도 잘 갖춰져 있습니다.",photo:null,date:"2025.06.01",nick:"대담한 나그네",avatar:"🐺"},
+    {stars:5,text:"여기 진짜 관리 잘 돼요! 이 근처 화장실 중 제일 깨끗한 것 같아요. 비데도 있어서 만족스럽습니다.",photo:null,date:"2025.05.22",nick:"깔끔한 산책러",avatar:"🦊"},
+    {stars:3,text:"시설은 좋은데 환기가 좀 아쉬워요. 여름엔 좀 더워서 빨리 나오게 되더라고요.",photo:null,date:"2025.04.15",nick:"예민한 도시인",avatar:"🐱"},
+  ],
+  "10": [
+    {stars:5,text:"BETA라서 걱정했는데 정말 깨끗하고 넓어요! 비데도 있고 24시간이라 완벽합니다. 강추!",photo:null,date:"2025.06.04",nick:"용감한 여행자",avatar:"🐼"},
+    {stars:4,text:"새로 생긴 화장실인지 시설이 아주 새것 같아요. 테헤란로 출근할 때 자주 이용하게 될 것 같네요.",photo:null,date:"2025.06.02",nick:"소심한 탐험가",avatar:"🐨"},
+    {stars:4,text:"위치가 좀 안쪽이라 처음엔 헷갈렸지만 찾고 나면 정말 좋은 화장실이에요. 직원분들도 친절하세요.",photo:null,date:"2025.05.29",nick:"꼼꼼한 방랑자",avatar:"🦄"},
+  ],
+  "12": [
+    {stars:4,text:"신논현역 이용하면 꼭 들르는 곳이에요. 비데 있고 넓어서 불편함 없이 사용했습니다.",photo:null,date:"2025.05.30",nick:"여유로운 나그네",avatar:"🐯"},
+    {stars:4,text:"24시간 개방이라 야간 귀갓길에 자주 이용해요. 전반적으로 관리 잘 되어있습니다.",photo:null,date:"2025.05.12",nick:"급한 산책러",avatar:"🐸"},
+  ],
+  "2": [
+    {stars:3,text:"구청 건물 내부라 평일 업무시간에만 이용 가능해요. 깔끔하긴 한데 주말엔 닫혀있어서 주의하세요.",photo:null,date:"2025.05.20",nick:"대담한 도시인",avatar:"🦁"},
+    {stars:4,text:"비데는 없지만 청결하게 관리됩니다. 강남구청 방문할 때 사용하면 좋아요.",photo:null,date:"2025.04.25",nick:"깔끔한 여행자",avatar:"🐶"},
+  ],
+  "8": [
+    {stars:2,text:"공원 내 화장실이라 그런지 여름엔 냄새가 좀 나요. 급하면 쓸 수 있지만 기대는 하지 마세요.",photo:null,date:"2025.05.05",nick:"예민한 탐험가",avatar:"🦝"},
+    {stars:4,text:"아침 일찍엔 꽤 깨끗해요. 공원 산책할 때 사용하기 좋습니다.",photo:null,date:"2025.04.10",nick:"소심한 방랑자",avatar:"🦊"},
+  ],
+};
+
+// ─── STATE ──────────────────────────────────────────────────
+let map, uMarker, routeLine;
+let uLat = DEF[0], uLng = DEF[1];
+let activeFilter = 'all';
+let sel = null; // selected toilet
+let tMarkers = [];
+let dark = localStorage.getItem('dark') === '1';
+let coins = parseInt(localStorage.getItem('coins') ?? '10');
+let savedIds = JSON.parse(localStorage.getItem('savedIds') || '[]');
+let unlockedIds = JSON.parse(localStorage.getItem('unlockedIds') || '[]'); // 이미 해금한 비밀 화장실
+let reviewsDB = JSON.parse(localStorage.getItem('reviews') || '{}'); // {toiletId: [{...}]}
+let dynToilets = JSON.parse(localStorage.getItem('dynToilets') || '[]'); // user-registered
+let pickedStar = 0;
+
+// 샘플 리뷰 시드 (해당 화장실 리뷰가 없을 때만 주입)
+function seedReviews() {
+  let changed = false;
+  for (const [key, revs] of Object.entries(SAMPLE_REVIEWS)) {
+    if (!reviewsDB[key]) { reviewsDB[key] = revs; changed = true; }
+  }
+  if (changed) localStorage.setItem('reviews', JSON.stringify(reviewsDB));
+}
+
+// ─── INIT ────────────────────────────────────────────────────
+function init() {
+  seedReviews();
+  applyDark(dark);
+  updateCoin();
+  updateSavedBadge();
+
+  map = L.map('map',{zoomControl:false}).setView(DEF,16);
+  setTiles();
+  map.on('click',()=>{closeSheet();clearRoute();});
+
+  renderMarkers();
+  addStoreMarkers();
+  setupSearch();
+  initRegType();
+  fetchLoc();
+}
+
+// ─── TILES ──────────────────────────────────────────────────
+function setTiles() {
+  map.eachLayer(l=>{if(l instanceof L.TileLayer) map.removeLayer(l);});
+  const url = dark
+    ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+    : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+  L.tileLayer(url,{attribution:'© OpenStreetMap | 서울시 열린데이터광장',maxZoom:19}).addTo(map);
+}
+
+// ─── ICONS ──────────────────────────────────────────────────
+function toiletIcon(type, beta) {
+  const c = type==='public'?'#2979ff':'#ffc107';
+  const e = type==='public'?'🚻':'🔒';
+  const b = beta?`<div style="position:absolute;top:-9px;right:-9px;background:#f44336;color:#fff;border-radius:5px;font-size:9px;font-weight:700;padding:1px 5px">BETA</div>`:'';
+  return L.divIcon({html:`<div style="position:relative">
+    <div style="width:38px;height:38px;background:${c};border-radius:50% 50% 50% 0;
+      transform:rotate(-45deg);border:3px solid #fff;box-shadow:0 3px 10px rgba(0,0,0,.3);
+      display:flex;align-items:center;justify-content:center;">
+      <span style="transform:rotate(45deg);font-size:15px">${e}</span></div>${b}</div>`,
+    className:'',iconSize:[38,38],iconAnchor:[19,38]});
+}
+function storeIcon() {
+  return L.divIcon({html:`<div style="width:28px;height:28px;background:#4caf50;border-radius:8px;
+    border:2.5px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.25);
+    display:flex;align-items:center;justify-content:center;font-size:14px">🏪</div>`,
+    className:'',iconSize:[28,28],iconAnchor:[14,14]});
+}
+function userIcon() {
+  return L.divIcon({html:'<div class="pulse"></div>',className:'',iconSize:[18,18],iconAnchor:[9,9]});
+}
+
+// ─── MARKERS (⭐ 내 마커 이동 제어 옵션 추가 통합) ─────────────────────
+function renderMarkers() {
+  tMarkers.forEach(m=>map.removeLayer(m));
+  tMarkers=[];
+  
+  // 1. 공공 데이터 기본 화장실 렌더링 (드래그 불가 고정)
+  TOILETS.filter(passFilter).forEach(t=>{
+    const m = L.marker([t.lat,t.lng],{icon:toiletIcon(t.type,t.beta)})
+      .addTo(map).on('click',e=>{L.DomEvent.stopPropagation(e);openSheet(t);});
+    tMarkers.push(m);
+  });
+
+  // 2. 사용자가 직접 추가한 유동성 화장실 렌더링 (⭐ draggable: true 탑재)
+  dynToilets.filter(passFilter).forEach(t=>{
+    const m = L.marker([t.lat,t.lng],{
+      icon:toiletIcon(t.type,t.beta),
+      draggable: true // ⭐ 마우스 드래그 이동 활성화
+    }).addTo(map);
+
+    // 마커 클릭 시 하단 바텀 시트 정보 패널 연동
+    m.on('click',e=>{
+      L.DomEvent.stopPropagation(e);
+      openSheet(t);
+    });
+
+    // ⭐ 드래그 드롭 마우스 오프 마침 시 좌표 영구 동기화 이벤트 연동
+    m.on('dragend', e => {
+      const newLatLng = e.target.getLatLng(); // 변경된 목적지 좌표 추출
+      updateToiletPosition(t.id, newLatLng.lat, newLatLng.lng);
+    });
+
+    tMarkers.push(m);
+  });
+}
+
+// ⭐ 드래그된 마커의 좌표 리포지셔닝 및 스토리지 동기화 제어 스크립트
+function updateToiletPosition(id, newLat, newLng) {
+  // 메모리 상의 dynToilets 좌표 정보 업데이트
+  dynToilets = dynToilets.map(t => {
+    if (t.id === id) {
+      return { ...t, lat: newLat, lng: newLng };
+    }
+    return t;
+  });
+
+  // 로컬 파일 영속성 레이어(Web Storage) 세션 플러시
+  localStorage.setItem('dynToilets', JSON.stringify(dynToilets));
+  
+  // 현재 활성화된 패널 대상물이 방금 움직인 화장실 인스턴스일 경우 거리 등 메타 데이터 갱신
+  if (sel && sel.id === id) {
+    sel.lat = newLat;
+    sel.lng = newLng;
+    const d = dist(uLat, uLng, newLat, newLng);
+    document.getElementById('sh-meta').textContent = `📍 ${fmtD(d)}${sel.addr?' · '+sel.addr:''}${sel.loc?' · '+sel.loc:''}`;
+  }
+
+  showToast('📍 화장실 마커의 위치가 수정되었습니다');
+}
+
+function addStoreMarkers() {
+  STORES.forEach(s=>{
+    L.marker([s.lat,s.lng],{icon:storeIcon()}).addTo(map)
+     .bindTooltip(s.name,{permanent:false,direction:'top'});
+  });
+}
+function passFilter(t) {
+  switch(activeFilter){
+    case'bidet':   return t.bidet;
+    case'open24h': return t.open24h;
+    case'disabled':return t.disabled;
+    case'public':  return t.type==='public';
+    case'secret':  return t.type==='secret';
+    default:return true;
+  }
+}
+function setFilter(el,f) {
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on'); activeFilter=f; renderMarkers();
+  showToast(`🔍 ${[...TOILETS,...dynToilets].filter(passFilter).length}개 화장실`);
+}
+
+// ─── LOCATION ────────────────────────────────────────────────
+function fetchLoc() {
+  if(!navigator.geolocation){setUPos(DEF[0],DEF[1]);return;}
+  navigator.geolocation.getCurrentPosition(p=>{
+    uLat=p.coords.latitude; uLng=p.coords.longitude;
+    setUPos(uLat,uLng); map.setView([uLat,uLng],16);
+  },()=>{
+    document.getElementById('gps-banner').classList.add('show');
+    setTimeout(()=>document.getElementById('gps-banner').classList.remove('show'),5000);
+    setUPos(DEF[0],DEF[1]);
+  },{timeout:8000});
+}
+function setUPos(lat,lng) {
+  if(uMarker) map.removeLayer(uMarker);
+  uMarker=L.marker([lat,lng],{icon:userIcon(),zIndexOffset:1000}).addTo(map);
+}
+function centerMe() {
+  if(!navigator.geolocation){map.setView([uLat,uLng],16);return;}
+  navigator.geolocation.getCurrentPosition(p=>{
+    uLat=p.coords.latitude;uLng=p.coords.longitude;
+    setUPos(uLat,uLng);map.setView([uLat,uLng],16);
+    showToast('📍 현재 위치로 이동했습니다');
+  },()=>{map.setView([uLat,uLng],16);showToast('📍 마지막 위치로 이동했습니다');});
+}
+
+// ─── BOTTOM SHEET ────────────────────────────────────────────
+function openSheet(t) {
+  sel = t;
+  switchTab(document.querySelector('.sh-tab'),  'info');
+
+  // type badge
+  const badge = document.getElementById('sh-type');
+  badge.className = t.type==='secret'?'t-sec':'t-pub';
+  badge.textContent = t.type==='secret'?'🟡 비밀 화장실':'🔵 공용 화장실';
+  if(t.beta){const b=document.createElement('span');b.className='t-beta';b.textContent='BETA';badge.appendChild(b);}
+
+  document.getElementById('sh-name').textContent = t.name;
+  const d = dist(uLat,uLng,t.lat,t.lng);
+  document.getElementById('sh-meta').textContent = `📍 ${fmtD(d)}${t.addr?' · '+t.addr:''}${t.loc?' · '+t.loc:''}`;
+
+  // 사용자가 직접 등록한 화장실이면 삭제 버튼 표시
+  const delBtn = document.getElementById('sh-del-btn');
+  const isUserAdded = dynToilets.some(x=>x.id===t.id);
+  delBtn.style.display = isUserAdded ? 'block' : 'none';
+  delBtn.onclick = ()=>deleteDynToilet(t.id);
+
+  // rating (merge user reviews)
+  const rData = computeRating(t);
+  document.getElementById('sh-stars').textContent = stars(rData.avg);
+  document.getElementById('sh-rating').textContent = rData.avg.toFixed(1);
+  document.getElementById('sh-rcnt').textContent = `(리뷰 ${rData.cnt}개)`;
+  const visibleRevCnt = (reviewsDB[String(t.id)]||[]).length;
+  document.getElementById('rev-tab-cnt').textContent = visibleRevCnt>0?`(${visibleRevCnt})`:'';
+
+  // clean bar
+  const fill=document.getElementById('cl-fill');
+  fill.style.width=t.clean+'%';
+  fill.style.background=t.clean>=80?'#34c759':t.clean>=60?'#ff9500':'#ff3b30';
+  document.getElementById('cl-pct').textContent=t.clean+'%';
+
+  // tags
+  const tags=[];
+  if(t.bidet)    tags.push('<span class="tag t-blue">🚿 비데</span>');
+  if(t.open24h)  tags.push('<span class="tag t-green">🕐 24시간</span>');
+  if(t.disabled) tags.push('<span class="tag t-blue">♿ 장애인용</span>');
+  tags.push(`<span class="tag t-gray">🚪 ${t.stalls||1}칸</span>`);
+  document.getElementById('sh-tags').innerHTML=tags.join('');
+
+  // secret
+  const secEl = document.getElementById('sh-secret');
+  if(t.type==='secret'){
+    secEl.style.display='block';
+    const already = unlockedIds.includes(t.id);
+    document.getElementById('sec-locked').style.display   = already ? 'none'  : 'block';
+    document.getElementById('sec-unlocked').style.display = already ? 'block' : 'none';
+    if(already){
+      document.getElementById('sec-pw-val').textContent = t.pw||'????';
+      document.getElementById('sec-loc').textContent    = `📍 위치: ${t.loc||''}`;
+    }
+  } else {
+    secEl.style.display='none';
+  }
+
+  document.getElementById('sheet').classList.add('open');
+  resetReviewForm();
+  renderReviews();
+}
+function closeSheet(){
+  document.getElementById('sheet').classList.remove('open');
+  sel=null;
+}
+function deleteDynToilet(id){
+  const tid = id ?? (sel&&sel.id);
+  if(tid==null) return;
+  if(!confirm('내가 등록한 화장실을 삭제할까요?\n삭제하면 되돌릴 수 없습니다.')) return;
+  dynToilets = dynToilets.filter(x=>x.id!==tid);
+  localStorage.setItem('dynToilets', JSON.stringify(dynToilets));
+  savedIds = savedIds.filter(x=>x!==tid);
+  localStorage.setItem('savedIds', JSON.stringify(savedIds));
+  closeSheet();
+  renderMarkers();
+  showToast('🗑️ 등록한 화장실이 삭제되었습니다');
+}
+function switchTab(el,pane) {
+  document.querySelectorAll('.sh-tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.sh-pane').forEach(p=>p.classList.remove('on'));
+  const tabs=[...document.querySelectorAll('.sh-tab')];
+  const panes=[...document.querySelectorAll('.sh-pane')];
+  if(el){
+    el.classList.add('on');
+    const i=tabs.indexOf(el);
+    if(panes[i]) panes[i].classList.add('on');
+  } else {
+    tabs[pane==='review'?1:0].classList.add('on');
+    panes[pane==='review'?1:0].classList.add('on');
+  }
+}
+
+// ─── RATING HELPERS ──────────────────────────────────────────
+function computeRating(t) {
+  const key = String(t.id);
+  const uRevs = reviewsDB[key]||[];
+  if(!uRevs.length) return {avg:t.rating,cnt:t.reviews};
+  const allStars = uRevs.map(r=>r.stars);
+  const uAvg = allStars.reduce((a,b)=>a+b,0)/allStars.length;
+  const totalCnt = t.reviews + uRevs.length;
+  const avg = (t.rating*t.reviews + uAvg*uRevs.length)/totalCnt;
+  return {avg:Math.round(avg*10)/10, cnt:totalCnt};
+}
+function stars(n){return'★'.repeat(Math.round(n))+'☆'.repeat(5-Math.round(n));}
+
+// ─── REVIEW FORM ─────────────────────────────────────────────
+function pickStar(v) {
+  pickedStar=v;
+  document.querySelectorAll('.sp').forEach(s=>{
+    s.classList.toggle('lit', +s.dataset.v<=v);
+    s.classList.toggle('dim', +s.dataset.v>v);
+  });
+}
+function resetReviewForm() {
+  pickedStar=0;
+  document.querySelectorAll('.sp').forEach(s=>{s.classList.remove('lit');s.classList.add('dim');});
+  document.getElementById('rev-text').value='';
+  document.getElementById('photo-name').textContent='최대 4MB';
+  document.getElementById('photo-preview').style.display='none';
+  document.getElementById('rev-err').style.display='none';
+  document.getElementById('photo-input').value='';
+  window._reviewPhotoB64=null;
+}
+function handlePhoto(inp) {
+  const f=inp.files[0]; if(!f) return;
+  if(f.size>4*1024*1024){showToast('⚠️ 사진은 4MB 이하만 첨부 가능합니다');inp.value='';return;}
+  document.getElementById('photo-name').textContent=f.name;
+  const r=new FileReader();
+  r.onload=e=>{
+    window._reviewPhotoB64=e.target.result;
+    const img=document.getElementById('photo-img');
+    img.src=e.target.result;
+    document.getElementById('photo-preview').style.display='block';
+  };
+  r.readAsDataURL(f);
+}
+function submitReview() {
+  const txt=document.getElementById('rev-text').value.trim();
+  const err=document.getElementById('rev-err');
+  if(!pickedStar||txt.length<10){err.style.display='block';return;}
+  err.style.display='none';
+  if(!sel) return;
+
+  const key=String(sel.id);
+  if(!reviewsDB[key]) reviewsDB[key]=[];
+  const adj=NICK_ADJ[Math.floor(Math.random()*NICK_ADJ.length)];
+  const noun=NICK_NOUN[Math.floor(Math.random()*NICK_NOUN.length)];
+  reviewsDB[key].unshift({
+    stars:pickedStar,
+    text:txt,
+    photo:window._reviewPhotoB64||null,
+    date:new Date().toLocaleDateString('ko-KR'),
+    nick:`${adj} ${noun}`,
+    avatar:AVATARS[Math.floor(Math.random()*AVATARS.length)],
+  });
+  localStorage.setItem('reviews',JSON.stringify(reviewsDB));
+
+  coins++; localStorage.setItem('coins',coins); updateCoin(true);
+
+  renderReviews();
+  resetReviewForm();
+  showToast('✅ 리뷰가 등록되었습니다! 🧻 코인 +1 지급');
+
+  const rData=computeRating(sel);
+  document.getElementById('rev-tab-cnt').textContent=`(${rData.cnt})`;
+  document.getElementById('sh-stars').textContent=stars(rData.avg);
+  document.getElementById('sh-rating').textContent=rData.avg.toFixed(1);
+  document.getElementById('sh-rcnt').textContent=`(리뷰 ${rData.cnt}개)`;
+}
+function renderReviews() {
+  if(!sel){return;}
+  const key=String(sel.id);
+  const revs=reviewsDB[key]||[];
+  const cards=document.getElementById('rev-cards');
+  if(!revs.length){
+    cards.innerHTML='<div id="no-rev">아직 리뷰가 없습니다.<br>첫 번째 리뷰를 남겨보세요! 🧻</div>';
+    document.getElementById('rev-list').querySelector('h4').textContent='전체 리뷰 (0)';
+    return;
+  }
+  document.getElementById('rev-list').querySelector('h4').textContent=`전체 리뷰 (${revs.length})`;
+  cards.innerHTML=revs.map(rv=>`
+    <div class="rev-card">
+      <div class="rc-top">
+        <div class="rc-avatar">${rv.avatar}</div>
+        <div class="rc-info">
+          <div class="rc-nick">${rv.nick}</div>
+          <div class="rc-date">${rv.date}</div>
+        </div>
+        <div class="rc-stars">${'★'.repeat(rv.stars)}${'☆'.repeat(5-rv.stars)}</div>
+      </div>
+      <div class="rc-text">${rv.text}</div>
+      ${rv.photo?`<div class="rc-photo"><img src="${rv.photo}" alt="리뷰 사진"/></div>`:''}
+    </div>`).join('');
+}
+
+// ─── FIND NEAREST ────────────────────────────────────────────
+function findNearest() {
+  const list=[...TOILETS,...dynToilets].filter(passFilter);
+  if(!list.length){showToast('⚠️ 주변에 화장실이 없습니다. 필터를 바꿔보세요.');return;}
+  const t=sortD(list)[0];
+  map.setView([t.lat,t.lng],17); openSheet(t); drawRoute(t);
+}
+
+// ─── TOP 3 ───────────────────────────────────────────────────
+function openTop3() {
+  const sorted=sortD([...TOILETS,...dynToilets].filter(passFilter)).slice(0,3);
+  const rks=['rk1','rk2','rk3'];
+  document.getElementById('t3-list').innerHTML=sorted.map((t,i)=>`
+    <div class="t3" onclick="selectT3(${JSON.stringify(t.id)})">
+      <div class="t3-rank ${rks[i]}">${i+1}</div>
+      <div class="t3-info">
+        <div class="tn">${t.name}</div>
+        <div class="tm">${fmtD(dist(uLat,uLng,t.lat,t.lng))} · ⭐ ${computeRating(t).avg.toFixed(1)} · ${t.type==='secret'?'🔒 비밀':'🔵 공용'}</div>
+      </div>
+    </div>`).join('');
+  document.getElementById('top3').classList.add('open');
+  document.getElementById('p-back').classList.add('open');
+}
+function closeTop3(){
+  document.getElementById('top3').classList.remove('open');
+  document.getElementById('p-back').classList.remove('open');
+}
+function selectT3(id){
+  const t=[...TOILETS,...dynToilets].find(x=>x.id==id);
+  if(!t)return; closeTop3(); map.setView([t.lat,t.lng],17); openSheet(t);
+}
+
+// ─── ROUTE ───────────────────────────────────────────────────
+function getRoute(){if(sel)drawRoute(sel);}
+function drawRoute(t){
+  clearRoute();
+  const ml=(uLat+t.lat)/2+(Math.random()-.5)*.002;
+  const mg=(uLng+t.lng)/2+(Math.random()-.5)*.002;
+  routeLine=L.polyline([[uLat,uLng],[ml,mg],[t.lat,t.lng]],
+    {color:'#2979ff',weight:5,opacity:.85,dashArray:'12 6',lineCap:'round'}).addTo(map);
+  map.fitBounds(routeLine.getBounds(),{padding:[80,80]});
+  const d=dist(uLat,uLng,t.lat,t.lng);
+  showToast(`🚶 도보 약 ${Math.max(1,Math.ceil(d/80))}분 (${fmtD(d)})`);
+}
+function clearRoute(){if(routeLine){map.removeLayer(routeLine);routeLine=null;}}
+
+// ─── SAVE ────────────────────────────────────────────────────
+function saveToilet(){
+  if(!sel)return;
+  if(savedIds.includes(sel.id)){showToast('이미 저장된 화장실입니다');return;}
+  savedIds.push(sel.id); localStorage.setItem('savedIds',JSON.stringify(savedIds));
+  updateSavedBadge(); showToast('💾 오프라인에서도 확인 가능하도록 저장했습니다');
+}
+function openSaved(){
+  if(!savedIds.length){showToast('저장된 화장실이 없습니다');return;}
+  const list=[...TOILETS,...dynToilets].filter(t=>savedIds.includes(t.id));
+  if(!list.length){showToast('저장된 화장실이 없습니다');return;}
+  document.getElementById('saved-list').innerHTML = list.map((t,i)=>`
+    <div class="saved-item" onclick="selectSaved(${t.id})">
+      <div class="saved-num">${i+1}</div>
+      <div class="saved-info">
+        <div class="sn">${t.name}</div>
+        <div class="sm">${fmtD(dist(uLat,uLng,t.lat,t.lng))} · ${t.type==='secret'?'🔒 비밀':'🔵 공용'} · ⭐${t.rating}</div>
+      </div>
+      <button class="saved-del" onclick="event.stopPropagation();removeSaved(${t.id})" title="저장 해제">✕</button>
+    </div>`).join('');
+  document.getElementById('saved-panel').classList.add('open');
+  document.getElementById('p-back').classList.add('open');
+}
+function closeSaved(){
+  document.getElementById('saved-panel').classList.remove('open');
+  document.getElementById('p-back').classList.remove('open');
+}
+function selectSaved(id){
+  const t=[...TOILETS,...dynToilets].find(x=>x.id===id);
+  if(!t)return; closeSaved(); map.setView([t.lat,t.lng],17); openSheet(t);
+}
+function removeSaved(id){
+  savedIds=savedIds.filter(x=>x!==id);
+  localStorage.setItem('savedIds',JSON.stringify(savedIds));
+  updateSavedBadge();
+  if(!savedIds.length){closeSaved();showToast('저장된 화장실이 없습니다');return;}
+  openSaved(); // 목록 새로고침
+}
+function closeAllPanels(){closeTop3();closeSaved();}
+function updateSavedBadge(){
+  const b=document.getElementById('saved-badge');
+  b.textContent=savedIds.length;
+  b.style.display=savedIds.length?'flex':'none';
+}
+
+// ─── COIN MODAL ──────────────────────────────────────────────
+function openCoinModal(){
+  document.getElementById('pw-reveal').style.display='none';
+  document.getElementById('m-ico').textContent='🔒';
+  document.getElementById('m-title').textContent='비밀번호 확인';
+  document.getElementById('m-sub').innerHTML='휴지 코인 1개를 사용하면<br>이 화장실의 비밀번호를 확인할 수 있습니다.';
+  const btn=document.getElementById('m-act');
+  btn.textContent='🧻 코인 1개 사용'; btn.onclick=useCoin;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function useCoin(){
+  if(coins<=0){showToast('🧻 코인이 부족합니다! 리뷰를 작성하면 코인을 받을 수 있어요.');closeModal();return;}
+  if(!sel||sel.type!=='secret'){closeModal();return;}
+  coins--; localStorage.setItem('coins',coins); updateCoin();
+  // 해금 목록에 저장
+  if(!unlockedIds.includes(sel.id)){
+    unlockedIds.push(sel.id);
+    localStorage.setItem('unlockedIds',JSON.stringify(unlockedIds));
+  }
+  // 모달에 비밀번호 표시
+  document.getElementById('pw-val').textContent=sel.pw||'????';
+  document.getElementById('pw-loc').textContent=`📍 위치: ${sel.loc||''}`;
+  document.getElementById('pw-reveal').style.display='block';
+  document.getElementById('m-ico').textContent='🔓';
+  document.getElementById('m-title').textContent='비밀번호 확인 완료!';
+  document.getElementById('m-sub').innerHTML='';
+  const saved = sel; // 클로저용
+  const btn=document.getElementById('m-act');
+  btn.textContent='✓ 닫기';
+  btn.onclick=()=>{ closeModal(); openSheet(saved); }; // 모달 닫은 뒤 시트 갱신
+}
+function closeModal(){document.getElementById('modal-overlay').classList.remove('open');}
+
+// ─── REGISTER ────────────────────────────────────────────────
+function openReg(){document.getElementById('reg-overlay').classList.add('open');}
+function closeReg(){document.getElementById('reg-overlay').classList.remove('open');}
+function initRegType(){
+  document.getElementById('reg-type').addEventListener('change',function(){
+    document.getElementById('reg-pw-wrap').style.display=this.value==='secret'?'block':'none';
+  });
+}
+function handleRegPhoto(inp){
+  const f=inp.files[0];if(!f)return;
+  if(f.size>4*1024*1024){showToast('⚠️ 사진은 4MB 이하만 가능합니다');inp.value='';return;}
+  document.getElementById('reg-photo-name').textContent=f.name;
+}
+function submitReg(){
+  const name=document.getElementById('reg-name').value.trim();
+  if(!name){showToast('화장실 이름을 입력해주세요');return;}
+  const addr=document.getElementById('reg-addr').value.trim();
+  if(!addr){showToast('주소를 입력해주세요! 다른 사용자가 위치를 알 수 있어요 📍');return;}
+  const type=document.getElementById('reg-type').value;
+  const loc=document.getElementById('reg-loc').value.trim();
+  const pw=document.getElementById('reg-pw').value.trim();
+  const newT={
+    id: Date.now(), name, addr, type, loc: loc||'미상', pw: pw||'',
+    rating:0,reviews:0,bidet:document.getElementById('reg-bidet').value==='1',
+    open24h:document.getElementById('reg-open').value==='1',
+    disabled:false,clean:70,stalls:1,
+    lat:uLat+(Math.random()-.5)*.002,lng:uLng+(Math.random()-.5)*.002,
+    beta:true,
+  };
+  dynToilets.push(newT); localStorage.setItem('dynToilets',JSON.stringify(dynToilets));
+  coins+=2; localStorage.setItem('coins',coins); updateCoin(true);
+  renderMarkers(); closeReg();
+  showToast('🚻 화장실이 등록되었습니다! 🧻 코인 +2 지급');
+  document.getElementById('reg-name').value='';
+  document.getElementById('reg-addr').value='';
+  document.getElementById('reg-loc').value='';
+  document.getElementById('reg-pw').value='';
+  document.getElementById('reg-photo-name').textContent='';
+}
+
+// ─── DARK MODE ───────────────────────────────────────────────
+function toggleDark(){dark=!dark;localStorage.setItem('dark',dark?'1':'0');applyDark(dark);setTiles();}
+function applyDark(on){
+  document.body.classList.toggle('dark',on);
+  document.getElementById('dark-btn').textContent=on?'☀️':'🌙';
+}
+
+// ─── SEARCH ──────────────────────────────────────────────────
+function setupSearch(){
+  const inp=document.getElementById('search-input');
+  const ac=document.getElementById('ac');
+  inp.addEventListener('input',()=>{
+    const v=inp.value.trim();
+    if(!v){ac.classList.remove('show');return;}
+    const all=[...TOILETS,...dynToilets];
+    const m=[
+      ...AC_BASE.filter(s=>s.includes(v)),
+      ...all.filter(t=>t.name.includes(v)).map(t=>t.name),
+    ].filter((x,i,a)=>a.indexOf(x)===i).slice(0,6);
+    if(!m.length){ac.classList.remove('show');return;}
+    ac.innerHTML=m.map(s=>`<div class="ac-item" onmousedown="selAC('${s.replace(/'/g,"\\'")}')">📍 ${s}</div>`).join('');
+    ac.classList.add('show');
+  });
+  inp.addEventListener('blur',()=>setTimeout(()=>ac.classList.remove('show'),200));
+}
+function selAC(v){
+  document.getElementById('search-input').value=v;
+  document.getElementById('ac').classList.remove('show');
+  const t=[...TOILETS,...dynToilets].find(x=>x.name===v);
+  if(t){map.setView([t.lat,t.lng],17);openSheet(t);}
+}
+
+// ─── COIN DISPLAY ────────────────────────────────────────────
+function updateCoin(anim){
+  document.getElementById('coin-n').textContent=coins;
+  if(anim){
+    const el=document.getElementById('coin');
+    el.classList.remove('coin-pop');
+    void el.offsetWidth;
+    el.classList.add('coin-pop');
+  }
+}
+
+// ─── UTILS ───────────────────────────────────────────────────
+function dist(a,b,c,d){
+  const R=6371000,f1=a*Math.PI/180,f2=c*Math.PI/180;
+  const df=(c-a)*Math.PI/180,dl=(d-b)*Math.PI/180;
+  const x=Math.sin(df/2)**2+Math.cos(f1)*Math.cos(f2)*Math.sin(dl/2)**2;
+  return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x));
+}
+function fmtD(m){return m<1000?`${Math.round(m)}m`:`${(m/1000).toFixed(1)}km`;}
+function sortD(list){return[...list].sort((a,b)=>dist(uLat,uLng,a.lat,a.lng)-dist(uLat,uLng,b.lat,b.lng));}
+
+let _tt;
+function showToast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.classList.add('show');
+  clearTimeout(_tt); _tt=setTimeout(()=>el.classList.remove('show'),3200);
+}
+
+// ─── START ───────────────────────────────────────────────────
+init();
+</script>
+</body>
+</html>
