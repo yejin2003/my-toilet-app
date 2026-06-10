@@ -5146,6 +5146,7 @@ function init() {
   map = L.map('map',{zoomControl:false}).setView(DEF,16);
   setTiles();
   map.on('click',()=>{closeSheet();clearRoute();});
+  map.on('moveend zoomend', renderMarkers);
 
   renderMarkers();
   addStoreMarkers();
@@ -5189,9 +5190,12 @@ function userIcon() {
 function renderMarkers() {
   tMarkers.forEach(m=>map.removeLayer(m));
   tMarkers=[];
-  
-  // 1. 공공 데이터 기본 화장실 렌더링 (드래그 불가 고정)
-  TOILETS.filter(passFilter).forEach(t=>{
+
+  // 현재 지도 화면 범위 (20% 여유)
+  const bounds = map.getBounds().pad(0.2);
+
+  // 1. 공공 데이터 기본 화장실 렌더링 (드래그 불가 고정) — 뷰포트 내만 렌더링
+  TOILETS.filter(t=>passFilter(t) && bounds.contains([t.lat,t.lng])).forEach(t=>{
     const m = L.marker([t.lat,t.lng],{icon:toiletIcon(t.type,t.beta)})
       .addTo(map).on('click',e=>{L.DomEvent.stopPropagation(e);openSheet(t);});
     tMarkers.push(m);
