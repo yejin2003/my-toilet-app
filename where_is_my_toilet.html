@@ -338,7 +338,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Noto Sans KR','Segoe UI',sans
 <div id="legend">
   <div class="lg"><div class="lg-dot" style="background:#2979ff"></div>공용 화장실</div>
   <div class="lg"><div class="lg-dot" style="background:#ffc107"></div>비밀 화장실</div>
-  <div class="lg"><div class="lg-dot" style="background:#4caf50"></div>편의점</div>
 </div>
 
 <div id="bot-ctrl">
@@ -405,7 +404,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Noto Sans KR','Segoe UI',sans
           </button>
         </div>
         <div id="sec-unlocked" style="display:none">
-          <h4 style="margin-bottom:10px;">🔓 비밀번호 (이미 해금됨)</h4>
+          <h4 style="margin-bottom:10px;">🔓 비밀번호 (잠금해제)</h4>
           <div style="background:var(--accent-l);border-radius:14px;padding:16px;text-align:center;">
             <div style="font-size:11px;color:var(--text2);font-weight:700;margin-bottom:8px;">도어락 비밀번호</div>
             <div id="sec-pw-val" style="font-size:34px;font-weight:900;color:var(--accent);letter-spacing:8px;"></div>
@@ -642,15 +641,15 @@ const TOILETS = [
   {id:77, name:"어린이대공원 숲속무대 화장실2",  lat:37.5498,lng:127.0808,type:"public", rating:4.0,reviews:7, bidet:false,open24h:false,disabled:false,clean:76,stalls:2, loc:"숲속무대 동쪽", addr:"서울 광진구 능동로 216"},
   {id:78, name:"세종대학교 인근 공중화장실",     lat:37.5542,lng:127.0782,type:"public", rating:3.5,reviews:12,bidet:false,open24h:false,disabled:false,clean:65,stalls:2, loc:"원광빌딩 앞", addr:"서울 광진구 능동로 272"},
   {id:79, name:"어린이대공원 북측 화장실",       lat:37.5512,lng:127.0811,type:"public", rating:3.8,reviews:8, bidet:false,open24h:false,disabled:true, clean:72,stalls:3, loc:"북문 방면", addr:"서울 광진구 능동로 216"},
+  // ── 비밀 화장실 (세종대·어린이대공원 부근) ──
+  {id:80, name:"세종대학교 학생회관 화장실",     lat:37.5510,lng:127.0737,type:"secret",rating:4.3,reviews:19,bidet:true, open24h:false,disabled:false,clean:88,stalls:2, loc:"학생회관 3층 우측", addr:"서울 광진구 능동로 209", pw:"1234"},
+  {id:81, name:"능동로 카페 화장실",             lat:37.5525,lng:127.0758,type:"secret",rating:3.9,reviews:8, bidet:false,open24h:false,disabled:false,clean:74,stalls:1, loc:"2층 계단 옆", addr:"서울 광진구 능동로 245", pw:"0000"},
+  {id:82, name:"어린이대공원 동문 카페 화장실",  lat:37.5488,lng:127.0820,type:"secret",rating:4.1,reviews:12,bidet:true, open24h:false,disabled:false,clean:82,stalls:1, loc:"B1 좌측", addr:"서울 광진구 능동로 231", pw:"9999"},
+  {id:83, name:"세종대 후문 편의시설 화장실",    lat:37.5498,lng:127.0712,type:"secret",rating:3.7,reviews:6, bidet:false,open24h:false,disabled:false,clean:70,stalls:1, loc:"1층 안쪽", addr:"서울 광진구 군자로 5", pw:"4321"},
+  {id:84, name:"어린이대공원 남문 인근 화장실",  lat:37.5463,lng:127.0771,type:"secret",rating:4.0,reviews:9, bidet:false,open24h:false,disabled:false,clean:76,stalls:1, loc:"지상 1층 우측", addr:"서울 광진구 광나루로 418", pw:"2580"},
 ];
 
-const STORES = [
-  {name:"GS25 강남역점",    lat:37.4988,lng:127.0270},
-  {name:"CU 역삼테헤란점",  lat:37.4993,lng:127.0308},
-  {name:"세븐일레븐 선릉점",lat:37.5039,lng:127.0478},
-  {name:"GS25 삼성코엑스점",lat:37.5082,lng:127.0618},
-  {name:"미니스톱 강남점",  lat:37.4976,lng:127.0248},
-];
+const STORES = [];
 
 const AC_BASE = [
   "강남역","선릉역","삼성역 코엑스","역삼역","압구정로데오역","학동역","도산공원","신논현역",
