@@ -5518,55 +5518,111 @@ function renderReviews() {
 }
 
 // ─── SEARCH & AUTOCOMPLETE ───────────────────────────────────
+// ─── 리스트 출력 기능이 추가된 검색 시스템 ──────────────────────────────────────────
+
 function setupSearch() {
   const input = document.getElementById('search-input');
-  const ac    = document.getElementById('ac');
+  const ac = document.getElementById('ac');
 
-  function getSuggestions(q) {
-    if(!q) return [];
-    const ql = q.toLowerCase();
-    const toiletNames = TOILETS.concat(dynToilets).map(t => t.name);
-    const candidates = AC_BASE.concat(toiletNames);
-    const seen = {}, result = [];
-    for(let i=0;i<candidates.length;i++){
-      const s = candidates[i];
-      if(!seen[s] && s.toLowerCase().includes(ql)){ seen[s]=1; result.push(s); }
-      if(result.length >= 8) break;
-    }
-    return result;
-  }
+  // 1. 입력창에 타이핑할 때 나오는 실시간 자동완성 제어
+  input.addEventListener('input', () => {
+    const v = input.value.trim();
+    if (!v) { ac.classList.remove('show'); return; }
 
-  function showAc(items) {
-    if(!items.length){ ac.classList.remove('show'); return; }
-    ac.innerHTML = items.map(s =>
-      '<div class="ac-item" onmousedown="doSearch(' + JSON.stringify(s) + ')">' + s + '</div>'
+    const all = [...TOILETS, ...dynToilets];
+    const matches = [
+      ...AC_BASE.filter(s => s.includes(v)),
+      ...all.filter(t => t.name.includes(v)).map(t => t.name)
+    ].filter((x, i, a) => a.indexOf(x) === i).slice(0, 6);
+
+    if (!matches.length) { ac.classList.remove('show'); return; }
+
+    // 자동완성 항목을 누르면 해당 키워드로 정식 검색(doSearch)이 실행됨
+    ac.innerHTML = matches.map(s => 
+      `<div class="ac-item" onmousedown="doSearch('${s.replace(/'/g, "\\'")}')">🔍 ${s}</div>`
     ).join('');
     ac.classList.add('show');
+  });
+
+  // 2. 엔터키(검색 실행) 및 ESC키 이벤트 처리
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      doSearch(input.value.trim());
+      input.blur(); // 모바일 키보드 닫기
+    }
+    if (e.key === 'Escape') {
+      ac.classList.remove('show');
+      input.blur();
+    }
+  });
+
+  // 3. 입력창 바깥을 눌렀을 때 목록 닫기 (단, 마우스 클릭 처리를 위해 약간의 지연시간 부여)
+  input.addEventListener('blur', () => {
+    setTimeout(() => ac.classList.remove('show'), 250);
+  });
+}
+
+// 엔터키를 치거나 자동완성을 클릭했을 때 리스트를 판별하는 핵심 검색 엔진
+function doSearch(q) {
+  if (!q) return;
+  
+  const input = document.getElementById('search-input');
+  const ac = document.getElementById('ac');
+  const ql = q.toLowerCase();
+  const all = [...TOILETS, ...dynToilets];
+
+  // 이름, 상세 위치, 주소 중 검색어가 포함된 모든 화장실 필터링
+  const matches = all.filter(t => 
+    t.name.toLowerCase().includes(ql) || 
+    (t.loc || '').toLowerCase().includes(ql) || 
+    (t.addr || '').toLowerCase().includes(ql)
+  );
+
+  // 검색 결과가 없을 때
+  if (matches.length === 0) {
+    ac.classList.remove('show');
+    showToast(`"${q}" 검색 결과가 없습니다.`);
+    return;
   }
 
-  input.addEventListener('input', function(){ showAc(getSuggestions(input.value.trim())); });
-  input.addEventListener('keydown', function(e){
-    if(e.key==='Enter'){ ac.classList.remove('show'); doSearch(input.value.trim()); }
-    if(e.key==='Escape'){ ac.classList.remove('show'); input.blur(); }
-  });
-  input.addEventListener('blur', function(){ setTimeout(function(){ ac.classList.remove('show'); }, 150); });
+  // 검색 결과가 딱 1개만 매칭될 때 (바로 이동)
+  if (matches.length === 1) {
+    const t = matches[0];
+    ac.classList.remove('show');
+    input.value = t.name;
+    map.setView([t.lat, t.lng], 17);
+    openSheet(t);
+    return;
+  }
+
+  // 검색 결과가 여러 개일 때 (리스트를 창에 쭉 뿌려줌)
+  input.value = q; // 입력창에 검색어 유지
+  ac.innerHTML = matches.map(t => {
+    // 내 위치로부터의 실시간 도보 거리 계산
+    const d = dist(uLat, uLng, t.lat, t.lng);
+    return `
+      <div class="ac-item" onmousedown="selectSearchResult(${t.id})" style="display:flex; justify-content:space-between; align-items:center;">
+        <span>🚻 <b>${t.name}</b><br><small style="color:var(--text2); font-size:11px;">${t.loc || '위치 미상'}</small></span>
+        <span style="font-size:12px; color:var(--accent); font-weight:bold; white-space:nowrap; margin-left:8px;">${fmtD(d)}</span>
+      </div>`;
+  }).join('');
+  
+  ac.classList.add('show');
+  showToast(`🔍 검색 결과 ${matches.length}개를 찾았습니다.`);
 }
 
-function doSearch(q) {
-  if(!q) return;
-  document.getElementById('search-input').value = q;
-  document.getElementById('ac').classList.remove('show');
-  const ql = q.toLowerCase();
-  const all = TOILETS.concat(dynToilets);
-  const match = all.find(function(t){ return t.name.toLowerCase().includes(ql); });
-  if(match){ map.setView([match.lat, match.lng], 17); openSheet(match); return; }
-  const byAddr = all.find(function(t){
-    return (t.loc||'').toLowerCase().includes(ql) || (t.addr_new||'').toLowerCase().includes(ql);
-  });
-  if(byAddr){ map.setView([byAddr.lat, byAddr.lng], 17); openSheet(byAddr); return; }
-  showToast('"' + q + '" 검색 결과가 없습니다');
+// 검색 결과 리스트에서 사용자가 특정 화장실을 클릭했을 때 작동하는 최종 이동 함수
+function selectSearchResult(id) {
+  const all = [...TOILETS, ...dynToilets];
+  const t = all.find(x => x.id === id);
+  if (!t) return;
+  
+  document.getElementById('search-input').value = t.name;
+  document.getElementById('ac').classList.remove('show'); // 리스트 창 닫기
+  
+  map.setView([t.lat, t.lng], 17); // 카메라 이동
+  openSheet(t); // 하단 바텀시트 정보 갱신
 }
-
 // ─── 비밀번호 신고 ────────────────────────────────────────────
 function togglePwReportForm(){
   const f = document.getElementById('sh-pw-report-form');
