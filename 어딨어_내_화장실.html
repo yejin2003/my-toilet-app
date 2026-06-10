@@ -327,7 +327,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Noto Sans KR','Segoe UI',sans
   </div>
   <div id="chips">
     <button class="chip on"  onclick="setFilter(this,'all')">전체</button>
-    <button class="chip" onclick="setFilter(this,'bidet')">🚿 비데</button>
     <button class="chip" onclick="setFilter(this,'open24h')">🕐 24시간</button>
     <button class="chip" onclick="setFilter(this,'disabled')">♿ 장애인용</button>
     <button class="chip" onclick="setFilter(this,'public')">🔵 공용</button>
@@ -393,7 +392,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Noto Sans KR','Segoe UI',sans
           </button>
         </div>
         <div id="sec-unlocked" style="display:none">
-          <h4 style="margin-bottom:10px;">🔓 비밀번호 (이미 해금됨)</h4>
+          <h4 style="margin-bottom:10px;">🔓 비밀번호 (잠금해제)</h4>
           <div style="background:var(--accent-l);border-radius:14px;padding:16px;text-align:center;">
             <div style="font-size:11px;color:var(--text2);font-weight:700;margin-bottom:8px;">도어락 비밀번호</div>
             <div id="sec-pw-val" style="font-size:34px;font-weight:900;color:var(--accent);letter-spacing:8px;"></div>
@@ -401,6 +400,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Noto Sans KR','Segoe UI',sans
           </div>
         </div>
       </div>
+      <!-- 비밀번호 신고 (공용 화장실만) -->
+      <div id="sh-pw-report" style="display:none;margin-bottom:14px;">
+        <button onclick="togglePwReportForm()" style="width:100%;padding:12px;border-radius:14px;border:1.5px dashed var(--bg3);background:none;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;">
+          🔒 이 화장실에 비밀번호가 있나요?
+        </button>
+        <div id="sh-pw-report-form" style="display:none;margin-top:10px;background:var(--bg2);border-radius:14px;padding:14px;">
+          <div style="font-size:13px;font-weight:700;margin-bottom:10px;">비밀번호 입력 시 🧻 코인 +1 지급!</div>
+          <div style="display:flex;gap:8px;">
+            <input id="sh-pw-input" type="text" placeholder="예: 1234" maxlength="10"
+              style="flex:1;padding:11px 14px;border-radius:12px;border:1.5px solid var(--bg3);background:var(--bg);color:var(--text);font-size:15px;font-weight:700;letter-spacing:4px;outline:none;"
+              onkeydown="if(event.key==='Enter')submitPwReport()"/>
+            <button onclick="submitPwReport()" style="padding:11px 18px;border-radius:12px;border:none;background:var(--accent);color:#fff;font-size:13px;font-weight:700;cursor:pointer;">등록</button>
+          </div>
+        </div>
+      </div>
+
       <div id="sh-acts">
         <button class="sh-btn sh-sec" onclick="saveToilet()">💾 저장</button>
         <button class="sh-btn sh-pri" onclick="getRoute()">🗺️ 길 안내</button>
@@ -5125,6 +5140,7 @@ let savedIds = JSON.parse(localStorage.getItem('savedIds') || '[]');
 let unlockedIds = JSON.parse(localStorage.getItem('unlockedIds') || '[]'); // 이미 해금한 비밀 화장실
 let reviewsDB = JSON.parse(localStorage.getItem('reviews') || '{}'); // {toiletId: [{...}]}
 let dynToilets = JSON.parse(localStorage.getItem('dynToilets') || '[]'); // user-registered
+let secretOverrides = JSON.parse(localStorage.getItem('secretOverrides') || '{}'); // {id: pw} 사용자 신고
 let pickedStar = 0;
 
 // 샘플 리뷰 시드 (해당 화장실 리뷰가 없을 때만 주입)
@@ -5318,9 +5334,9 @@ function openSheet(t) {
 
   // rating (merge user reviews)
   const rData = computeRating(t);
-  document.getElementById('sh-stars').textContent = stars(rData.avg);
-  document.getElementById('sh-rating').textContent = rData.avg.toFixed(1);
-  document.getElementById('sh-rcnt').textContent = `(리뷰 ${rData.cnt}개)`;
+  document.getElementById('sh-stars').textContent = rData.cnt > 0 ? stars(rData.avg) : '☆☆☆☆☆';
+  document.getElementById('sh-rating').textContent = rData.cnt > 0 ? rData.avg.toFixed(1) : '-';
+  document.getElementById('sh-rcnt').textContent = rData.cnt > 0 ? `(리뷰 ${rData.cnt}개)` : '(리뷰 없음)';
   const visibleRevCnt = (reviewsDB[String(t.id)]||[]).length;
   document.getElementById('rev-tab-cnt').textContent = visibleRevCnt>0?`(${visibleRevCnt})`:'';
 
@@ -5338,20 +5354,31 @@ function openSheet(t) {
   tags.push(`<span class="tag t-gray">🚪 ${t.stalls||1}칸</span>`);
   document.getElementById('sh-tags').innerHTML=tags.join('');
 
+  // secretOverrides 반영
+  const overridePw = secretOverrides[t.id];
+  const effectiveType = (t.type === 'secret' || overridePw) ? 'secret' : 'public';
+  const effectivePw   = overridePw || t.pw;
+
   // secret
   const secEl = document.getElementById('sh-secret');
-  if(t.type==='secret'){
+  if(effectiveType === 'secret'){
     secEl.style.display='block';
     const already = unlockedIds.includes(t.id);
     document.getElementById('sec-locked').style.display   = already ? 'none'  : 'block';
     document.getElementById('sec-unlocked').style.display = already ? 'block' : 'none';
     if(already){
-      document.getElementById('sec-pw-val').textContent = t.pw||'????';
+      document.getElementById('sec-pw-val').textContent = effectivePw||'????';
       document.getElementById('sec-loc').textContent    = `📍 위치: ${t.loc||''}`;
     }
   } else {
     secEl.style.display='none';
   }
+
+  // 공용 화장실에만 비밀번호 신고 버튼 표시
+  const reportEl = document.getElementById('sh-pw-report');
+  if(reportEl) reportEl.style.display = effectiveType === 'public' ? 'block' : 'none';
+  const reportForm = document.getElementById('sh-pw-report-form');
+  if(reportForm){ reportForm.style.display='none'; document.getElementById('sh-pw-input').value=''; }
 
   document.getElementById('sheet').classList.add('open');
   resetReviewForm();
@@ -5392,12 +5419,10 @@ function switchTab(el,pane) {
 function computeRating(t) {
   const key = String(t.id);
   const uRevs = reviewsDB[key]||[];
-  if(!uRevs.length) return {avg:t.rating,cnt:t.reviews};
+  if(!uRevs.length) return {avg:0, cnt:0};
   const allStars = uRevs.map(r=>r.stars);
-  const uAvg = allStars.reduce((a,b)=>a+b,0)/allStars.length;
-  const totalCnt = t.reviews + uRevs.length;
-  const avg = (t.rating*t.reviews + uAvg*uRevs.length)/totalCnt;
-  return {avg:Math.round(avg*10)/10, cnt:totalCnt};
+  const avg = allStars.reduce((a,b)=>a+b,0)/allStars.length;
+  return {avg:Math.round(avg*10)/10, cnt:uRevs.length};
 }
 function stars(n){return'★'.repeat(Math.round(n))+'☆'.repeat(5-Math.round(n));}
 
@@ -5492,6 +5517,83 @@ function renderReviews() {
     </div>`).join('');
 }
 
+// ─── SEARCH & AUTOCOMPLETE ───────────────────────────────────
+function setupSearch() {
+  const input = document.getElementById('search-input');
+  const ac    = document.getElementById('ac');
+
+  function getSuggestions(q) {
+    if(!q) return [];
+    const ql = q.toLowerCase();
+    const toiletNames = TOILETS.concat(dynToilets).map(t => t.name);
+    const candidates = AC_BASE.concat(toiletNames);
+    const seen = {}, result = [];
+    for(let i=0;i<candidates.length;i++){
+      const s = candidates[i];
+      if(!seen[s] && s.toLowerCase().includes(ql)){ seen[s]=1; result.push(s); }
+      if(result.length >= 8) break;
+    }
+    return result;
+  }
+
+  function showAc(items) {
+    if(!items.length){ ac.classList.remove('show'); return; }
+    ac.innerHTML = items.map(s =>
+      '<div class="ac-item" onmousedown="doSearch(' + JSON.stringify(s) + ')">' + s + '</div>'
+    ).join('');
+    ac.classList.add('show');
+  }
+
+  input.addEventListener('input', function(){ showAc(getSuggestions(input.value.trim())); });
+  input.addEventListener('keydown', function(e){
+    if(e.key==='Enter'){ ac.classList.remove('show'); doSearch(input.value.trim()); }
+    if(e.key==='Escape'){ ac.classList.remove('show'); input.blur(); }
+  });
+  input.addEventListener('blur', function(){ setTimeout(function(){ ac.classList.remove('show'); }, 150); });
+}
+
+function doSearch(q) {
+  if(!q) return;
+  document.getElementById('search-input').value = q;
+  document.getElementById('ac').classList.remove('show');
+  const ql = q.toLowerCase();
+  const all = TOILETS.concat(dynToilets);
+  const match = all.find(function(t){ return t.name.toLowerCase().includes(ql); });
+  if(match){ map.setView([match.lat, match.lng], 17); openSheet(match); return; }
+  const byAddr = all.find(function(t){
+    return (t.loc||'').toLowerCase().includes(ql) || (t.addr_new||'').toLowerCase().includes(ql);
+  });
+  if(byAddr){ map.setView([byAddr.lat, byAddr.lng], 17); openSheet(byAddr); return; }
+  showToast('"' + q + '" 검색 결과가 없습니다');
+}
+
+// ─── 비밀번호 신고 ────────────────────────────────────────────
+function togglePwReportForm(){
+  const f = document.getElementById('sh-pw-report-form');
+  f.style.display = f.style.display==='none' ? 'block' : 'none';
+  if(f.style.display==='block') document.getElementById('sh-pw-input').focus();
+}
+function submitPwReport(){
+  const pw = document.getElementById('sh-pw-input').value.trim();
+  if(!pw){ showToast('비밀번호를 입력해주세요'); return; }
+  if(!sel){ return; }
+  secretOverrides[sel.id] = pw;
+  localStorage.setItem('secretOverrides', JSON.stringify(secretOverrides));
+  if(!unlockedIds.includes(sel.id)){
+    unlockedIds.push(sel.id);
+    localStorage.setItem('unlockedIds', JSON.stringify(unlockedIds));
+  }
+  coins++; localStorage.setItem('coins', JSON.stringify(coins)); updateCoin(true);
+  showToast('🧻 비밀번호 등록 완료! 코인 +1');
+  document.getElementById('sh-pw-report').style.display='none';
+  const secEl = document.getElementById('sh-secret');
+  secEl.style.display='block';
+  document.getElementById('sec-locked').style.display='none';
+  document.getElementById('sec-unlocked').style.display='block';
+  document.getElementById('sec-pw-val').textContent = pw;
+  document.getElementById('sec-loc').textContent = '📍 위치: ' + (sel.loc||'');
+}
+
 // ─── FIND NEAREST ────────────────────────────────────────────
 function findNearest() {
   const list=[...TOILETS,...dynToilets].filter(passFilter);
@@ -5509,7 +5611,7 @@ function openTop3() {
       <div class="t3-rank ${rks[i]}">${i+1}</div>
       <div class="t3-info">
         <div class="tn">${t.name}</div>
-        <div class="tm">${fmtD(dist(uLat,uLng,t.lat,t.lng))} · ⭐ ${computeRating(t).avg.toFixed(1)} · ${t.type==='secret'?'🔒 비밀':'🔵 공용'}</div>
+        <div class="tm">${fmtD(dist(uLat,uLng,t.lat,t.lng))} · ${(()=>{const r=computeRating(t);return r.cnt>0?'⭐ '+r.avg.toFixed(1):'리뷰 없음';})()}} · ${t.type==='secret'?'🔒 비밀':'🔵 공용'}</div>
       </div>
     </div>`).join('');
   document.getElementById('top3').classList.add('open');
@@ -5595,15 +5697,16 @@ function openCoinModal(){
 }
 function useCoin(){
   if(coins<=0){showToast('🧻 코인이 부족합니다! 리뷰를 작성하면 코인을 받을 수 있어요.');closeModal();return;}
-  if(!sel||sel.type!=='secret'){closeModal();return;}
+  const isPwSecret = sel && (sel.type==='secret' || secretOverrides[sel.id]);
+  if(!sel||!isPwSecret){closeModal();return;}
   coins--; localStorage.setItem('coins',coins); updateCoin();
   // 해금 목록에 저장
   if(!unlockedIds.includes(sel.id)){
     unlockedIds.push(sel.id);
     localStorage.setItem('unlockedIds',JSON.stringify(unlockedIds));
   }
-  // 모달에 비밀번호 표시
-  document.getElementById('pw-val').textContent=sel.pw||'????';
+  // 모달에 비밀번호 표시 (override 우선)
+  document.getElementById('pw-val').textContent=secretOverrides[sel.id]||sel.pw||'????';
   document.getElementById('pw-loc').textContent=`📍 위치: ${sel.loc||''}`;
   document.getElementById('pw-reveal').style.display='block';
   document.getElementById('m-ico').textContent='🔓';
