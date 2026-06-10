@@ -5142,7 +5142,8 @@ let reviewsDB = JSON.parse(localStorage.getItem('reviews') || '{}'); // {toiletI
 let dynToilets = JSON.parse(localStorage.getItem('dynToilets') || '[]'); // user-registered
 let secretOverrides = JSON.parse(localStorage.getItem('secretOverrides') || '{}'); // {id: pw} 사용자 신고
 let pickedStar = 0;
-
+let isZoomAlertShown = false;
+  
 // 샘플 리뷰 시드 (해당 화장실 리뷰가 없을 때만 주입)
 function seedReviews() {
   let changed = false;
@@ -5204,41 +5205,53 @@ function userIcon() {
 
 // ─── MARKERS (⭐ 내 마커 이동 제어 옵션 추가 통합) ─────────────────────
 function renderMarkers() {
-  tMarkers.forEach(m=>map.removeLayer(m));
-  tMarkers=[];
+  // 기존 화면의 마커들을 모두 지웁니다.
+  tMarkers.forEach(m => map.removeLayer(m));
+  tMarkers = [];
 
-  // 현재 지도 화면 범위 (20% 여유)
+  // 1. 지도를 너무 많이 축소하면(줌 레벨 14 미만) 연산을 중단하여 랙을 방지합니다.
+  if (map.getZoom() < 14) {
+    if (!isZoomAlertShown) {
+      showToast('🔍 지도를 확대해야 화장실 마커가 표시됩니다.');
+      isZoomAlertShown = true;
+    }
+    return; // 렌더링 중단
+  }
+  isZoomAlertShown = false;
+
+  // 2. 현재 화면에 보이는 지도 영역(Bounds) + 20% 여유 공간 구하기
   const bounds = map.getBounds().pad(0.2);
 
-  // 1. 공공 데이터 기본 화장실 렌더링 (드래그 불가 고정) — 뷰포트 내만 렌더링
-  TOILETS.filter(t=>passFilter(t) && bounds.contains([t.lat,t.lng])).forEach(t=>{
-    const m = L.marker([t.lat,t.lng],{icon:toiletIcon(t.type,t.beta)})
-      .addTo(map).on('click',e=>{L.DomEvent.stopPropagation(e);openSheet(t);});
-    tMarkers.push(m);
+  // 3. 고정 화장실 데이터 렌더링 (화면 안에 있는 것만)
+  TOILETS.forEach(t => {
+    if (passFilter(t) && bounds.contains([t.lat, t.lng])) {
+      const m = L.marker([t.lat, t.lng], { icon: toiletIcon(t.type, t.beta) })
+        .addTo(map).on('click', e => { L.DomEvent.stopPropagation(e); openSheet(t); });
+      tMarkers.push(m);
+    }
   });
 
-  // 2. 사용자가 직접 추가한 유동성 화장실 렌더링 (⭐ draggable: true 탑재)
-  dynToilets.filter(passFilter).forEach(t=>{
-    const m = L.marker([t.lat,t.lng],{
-      icon:toiletIcon(t.type,t.beta),
-      draggable: true // ⭐ 마우스 드래그 이동 활성화
-    }).addTo(map);
+  // 4. 사용자가 직접 추가한 화장실 렌더링 (드래그 이동 기능 포함)
+  dynToilets.forEach(t => {
+    if (passFilter(t) && bounds.contains([t.lat, t.lng])) {
+      const m = L.marker([t.lat, t.lng], {
+        icon: toiletIcon(t.type, t.beta),
+        draggable: true // 마커 드래그 이동 가능
+      }).addTo(map);
 
-    // 마커 클릭 시 하단 바텀 시트 정보 패널 연동
-    m.on('click',e=>{
-      L.DomEvent.stopPropagation(e);
-      openSheet(t);
-    });
-
-    // ⭐ 드래그 드롭 마우스 오프 마침 시 좌표 영구 동기화 이벤트 연동
-    m.on('dragend', e => {
-      const newLatLng = e.target.getLatLng(); // 변경된 목적지 좌표 추출
-      updateToiletPosition(t.id, newLatLng.lat, newLatLng.lng);
-    });
-
-    tMarkers.push(m);
+      m.on('click', e => { L.DomEvent.stopPropagation(e); openSheet(t); });
+      
+      // 드래그가 끝났을 때 좌표 영구 저장
+      m.on('dragend', e => {
+        const newLatLng = e.target.getLatLng();
+        updateToiletPosition(t.id, newLatLng.lat, newLatLng.lng);
+      });
+      
+      tMarkers.push(m);
+    }
   });
 }
+  
 
 // ⭐ 드래그된 마커의 좌표 리포지셔닝 및 스토리지 동기화 제어 스크립트
 function updateToiletPosition(id, newLat, newLng) {
