@@ -507,10 +507,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Noto Sans KR','Segoe UI',sans
     </div>
     <div class="m-row">
       <div class="m-field">
-        <label>비데 여부</label>
-        <select class="m-input m-select" id="reg-bidet">
-          <option value="0">없음</option>
-          <option value="1">있음</option>
+        <label>장애인용</label>
+        <select class="m-input m-select" id="reg-disabled">
+          <option value="0">아니오</option>
+          <option value="1">예</option>
         </select>
       </div>
       <div class="m-field">
@@ -688,6 +688,12 @@ const TOILETS = [
   {id:112,name:"대치동 은마아파트 인근 화장실",  lat:37.4924,lng:127.0618,type:"public", rating:3.4,reviews:10,bidet:false,open24h:false,disabled:false,clean:62,stalls:2, loc:"상가 앞", addr:"서울 강남구 남부순환로 3235"},
   {id:113,name:"개포 현대아파트 단지 화장실",    lat:37.4861,lng:127.0591,type:"secret",rating:4.1,reviews:7, bidet:true, open24h:false,disabled:false,clean:86,stalls:1, loc:"관리사무소 옆", addr:"서울 강남구 개포로 509", pw:"1357"},
   {id:114,name:"일원동 마트 화장실",            lat:37.4908,lng:127.0693,type:"secret",rating:3.9,reviews:11,bidet:false,open24h:false,disabled:true, clean:75,stalls:2, loc:"2층 계산대 뒤", addr:"서울 강남구 일원로 90", pw:"2468"},
+  // ── 개포자이프레지던스 인근 ──
+  {id:115,name:"개포자이 앞 소공원 화장실",      lat:37.4807,lng:127.0548,type:"public", rating:4.2,reviews:8, bidet:false,open24h:true, disabled:true, clean:82,stalls:3, loc:"소공원 내", addr:"서울 강남구 삼성로 14"},
+  {id:116,name:"개포동 삼성로 공중화장실",       lat:37.4795,lng:127.0532,type:"public", rating:3.9,reviews:13,bidet:false,open24h:true, disabled:false,clean:74,stalls:3, loc:"지상 1층", addr:"서울 강남구 삼성로 5"},
+  {id:117,name:"양재천 자이프레지던스 구간 화장실",lat:37.4833,lng:127.0496,type:"public", rating:4.4,reviews:22,bidet:false,open24h:true, disabled:true, clean:86,stalls:4, loc:"양재천 산책로", addr:"서울 강남구 개포로 22"},
+  {id:118,name:"개포자이 상가 카페 화장실",      lat:37.4812,lng:127.0561,type:"secret",rating:4.6,reviews:6, bidet:true, open24h:false,disabled:false,clean:94,stalls:1, loc:"1층 안쪽", addr:"서울 강남구 삼성로 12", pw:"1004"},
+  {id:119,name:"개포동 주민센터 화장실",         lat:37.4821,lng:127.0514,type:"public", rating:3.7,reviews:9, bidet:false,open24h:false,disabled:true, clean:71,stalls:2, loc:"1층", addr:"서울 강남구 개포로 416"},
 ];
 
 const STORES = [];
@@ -1045,12 +1051,10 @@ function switchTab(el,pane) {
 function computeRating(t) {
   const key = String(t.id);
   const uRevs = reviewsDB[key]||[];
-  if(!uRevs.length) return {avg:t.rating,cnt:t.reviews};
+  if(!uRevs.length) return {avg:t.rating, cnt:0};
   const allStars = uRevs.map(r=>r.stars);
   const uAvg = allStars.reduce((a,b)=>a+b,0)/allStars.length;
-  const totalCnt = t.reviews + uRevs.length;
-  const avg = (t.rating*t.reviews + uAvg*uRevs.length)/totalCnt;
-  return {avg:Math.round(avg*10)/10, cnt:totalCnt};
+  return {avg:Math.round(uAvg*10)/10, cnt:uRevs.length};
 }
 function stars(n){return'★'.repeat(Math.round(n))+'☆'.repeat(5-Math.round(n));}
 
@@ -1313,9 +1317,9 @@ function submitReg(){
   const pw=document.getElementById('reg-pw').value.trim();
   const newT={
     id: Date.now(), name, addr, type, loc: loc||'미상', pw: pw||'',
-    rating:0,reviews:0,bidet:document.getElementById('reg-bidet').value==='1',
+    rating:0,reviews:0,bidet:false,
     open24h:document.getElementById('reg-open').value==='1',
-    disabled:false,clean:70,stalls:1,
+    disabled:document.getElementById('reg-disabled').value==='1',clean:70,stalls:1,
     lat:uLat+(Math.random()-.5)*.002,lng:uLng+(Math.random()-.5)*.002,
     beta:true,
   };
