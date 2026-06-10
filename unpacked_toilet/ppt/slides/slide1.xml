@@ -1,0 +1,672 @@
+<?xml version="1.0" encoding="UTF-8"?><p:sld xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main">
+  <p:cSld name="Slide 1">
+    <p:bg>
+      <p:bgPr>
+        <a:solidFill>
+          <a:srgbClr val="1B3A63"/>
+        </a:solidFill>
+        <a:effectLst/>
+      </p:bgPr>
+    </p:bg>
+    <p:spTree>
+      <p:nvGrpSpPr>
+        <p:cNvPr id="1" name=""/>
+        <p:cNvGrpSpPr/>
+        <p:nvPr/>
+      </p:nvGrpSpPr>
+      <p:grpSpPr>
+        <a:xfrm>
+          <a:off x="0" y="0"/>
+          <a:ext cx="0" cy="0"/>
+          <a:chOff x="0" y="0"/>
+          <a:chExt cx="0" cy="0"/>
+        </a:xfrm>
+      </p:grpSpPr>
+      <p:sp>
+        <p:nvSpPr>
+          <p:cNvPr id="2" name="Shape 0"/>
+          <p:cNvSpPr/>
+          <p:nvPr/>
+        </p:nvSpPr>
+        <p:spPr>
+          <a:xfrm>
+            <a:off x="8778240" y="-1463040"/>
+            <a:ext cx="5029200" cy="5029200"/>
+          </a:xfrm>
+          <a:prstGeom prst="ellipse">
+            <a:avLst/>
+          </a:prstGeom>
+          <a:solidFill>
+            <a:srgbClr val="234A7C"/>
+          </a:solidFill>
+          <a:ln/>
+        </p:spPr>
+        <p:txBody>
+          <a:bodyPr/>
+          <a:lstStyle/>
+          <a:p>
+            <a:endParaRPr lang="ko-KR" altLang="en-US"/>
+          </a:p>
+        </p:txBody>
+      </p:sp>
+      <p:sp>
+        <p:nvSpPr>
+          <p:cNvPr id="3" name="Shape 1"/>
+          <p:cNvSpPr/>
+          <p:nvPr/>
+        </p:nvSpPr>
+        <p:spPr>
+          <a:xfrm>
+            <a:off x="10424160" y="4206240"/>
+            <a:ext cx="3291840" cy="3291840"/>
+          </a:xfrm>
+          <a:prstGeom prst="ellipse">
+            <a:avLst/>
+          </a:prstGeom>
+          <a:solidFill>
+            <a:srgbClr val="234A7C"/>
+          </a:solidFill>
+          <a:ln/>
+        </p:spPr>
+        <p:txBody>
+          <a:bodyPr/>
+          <a:lstStyle/>
+          <a:p>
+            <a:endParaRPr lang="ko-KR" altLang="en-US"/>
+          </a:p>
+        </p:txBody>
+      </p:sp>
+      <p:sp>
+        <p:nvSpPr>
+          <p:cNvPr id="4" name="Text 2"/>
+          <p:cNvSpPr/>
+          <p:nvPr/>
+        </p:nvSpPr>
+        <p:spPr>
+          <a:xfrm>
+            <a:off x="822960" y="1965960"/>
+            <a:ext cx="7315200" cy="457200"/>
+          </a:xfrm>
+          <a:prstGeom prst="rect">
+            <a:avLst/>
+          </a:prstGeom>
+          <a:noFill/>
+          <a:ln/>
+        </p:spPr>
+        <p:txBody>
+          <a:bodyPr wrap="square" lIns="0" tIns="0" rIns="0" bIns="0" rtlCol="0" anchor="ctr"/>
+          <a:lstStyle/>
+          <a:p>
+            <a:pPr marL="0" indent="0">
+              <a:buNone/>
+            </a:pPr>
+            <a:r>
+              <a:rPr lang="en-US" sz="1400" b="1" kern="0" spc="200" dirty="0">
+                <a:solidFill>
+                  <a:srgbClr val="FFC107"/>
+                </a:solidFill>
+                <a:latin typeface="맑은 고딕" pitchFamily="34" charset="0"/>
+                <a:ea typeface="맑은 고딕" pitchFamily="34" charset="-122"/>
+                <a:cs typeface="맑은 고딕" pitchFamily="34" charset="-120"/>
+              </a:rPr>
+              <a:t xml:space="preserve">PROJECT BRIEFING · 코드 &amp; </a:t>
+            </a:r>
+            <a:r>
+              <a:rPr lang="en-US" sz="1400" b="1" kern="0" spc="200" dirty="0" err="1">
+                <a:solidFill>
+                  <a:srgbClr val="FFC107"/>
+                </a:solidFill>
+                <a:latin typeface="맑은 고딕" pitchFamily="34" charset="0"/>
+                <a:ea typeface="맑은 고딕" pitchFamily="34" charset="-122"/>
+                <a:cs typeface="맑은 고딕" pitchFamily="34" charset="-120"/>
+              </a:rPr>
+              <a:t>동작</a:t>
+            </a:r>
+            <a:r>
+              <a:rPr lang="en-US" sz="1400" b="1" kern="0" spc="200" dirty="0">
+                <a:solidFill>
+                  <a:srgbClr val="FFC107"/>
+                </a:solidFill>
+                <a:latin typeface="맑은 고딕" pitchFamily="34" charset="0"/>
+                <a:ea typeface="맑은 고딕" pitchFamily="34" charset="-122"/>
+                <a:cs typeface="맑은 고딕" pitchFamily="34" charset="-120"/>
+              </a:rPr>
+              <a:t xml:space="preserve"> </a:t>
+            </a:r>
+            <a:r>
+              <a:rPr lang="en-US" sz="1400" b="1" kern="0" spc="200" dirty="0" err="1">
+                <a:solidFill>
+                  <a:srgbClr val="FFC107"/>
+                </a:solidFill>
+                <a:latin typeface="맑은 고딕" pitchFamily="34" charset="0"/>
+                <a:ea typeface="맑은 고딕" pitchFamily="34" charset="-122"/>
+                <a:cs typeface="맑은 고딕" pitchFamily="34" charset="-120"/>
+              </a:rPr>
+              <a:t>원리</a:t>
+            </a:r>
+            <a:endParaRPr lang="en-US" sz="1400" dirty="0"/>
+          </a:p>
+        </p:txBody>
+      </p:sp>
+      <p:sp>
+        <p:nvSpPr>
+          <p:cNvPr id="5" name="Text 3"/>
+          <p:cNvSpPr/>
+          <p:nvPr/>
+        </p:nvSpPr>
+        <p:spPr>
+          <a:xfrm>
+            <a:off x="777240" y="2423160"/>
+            <a:ext cx="8686800" cy="1554480"/>
+          </a:xfrm>
+          <a:prstGeom prst="rect">
+            <a:avLst/>
+          </a:prstGeom>
+          <a:noFill/>
+          <a:ln/>
+        </p:spPr>
+        <p:txBody>
+          <a:bodyPr wrap="square" lIns="0" tIns="0" rIns="0" bIns="0" rtlCol="0" anchor="ctr"/>
+          <a:lstStyle/>
+          <a:p>
+            <a:pPr marL="0" indent="0">
+              <a:buNone/>
+            </a:pPr>
+            <a:r>
+              <a:rPr lang="en-US" sz="5600" b="1" dirty="0">
+                <a:solidFill>
+                  <a:srgbClr val="FFFFFF"/>
+                </a:solidFill>
+                <a:latin typeface="맑은 고딕" pitchFamily="34" charset="0"/>
+                <a:ea typeface="맑은 고딕" pitchFamily="34" charset="-122"/>
+                <a:cs typeface="맑은 고딕" pitchFamily="34" charset="-120"/>
+              </a:rPr>
+              <a:t>어딨어 내 화장실</a:t>
+            </a:r>
+            <a:endParaRPr lang="en-US" sz="5600" dirty="0"/>
+          </a:p>
+        </p:txBody>
+      </p:sp>
+      <p:sp>
+        <p:nvSpPr>
+          <p:cNvPr id="6" name="Text 4"/>
+          <p:cNvSpPr/>
+          <p:nvPr/>
+        </p:nvSpPr>
+        <p:spPr>
+          <a:xfrm>
+            <a:off x="822959" y="3977640"/>
+            <a:ext cx="8251767" cy="1005840"/>
+          </a:xfrm>
+          <a:prstGeom prst="rect">
+            <a:avLst/>
+          </a:prstGeom>
+          <a:noFill/>
+          <a:ln/>
+        </p:spPr>
+        <p:txBody>
+          <a:bodyPr wrap="square" lIns="0" tIns="0" rIns="0" bIns="0" rtlCol="0" anchor="ctr"/>
+          <a:lstStyle/>
+          <a:p>
+            <a:pPr marL="0" indent="0">
+              <a:lnSpc>
+                <a:spcPct val="130000"/>
+              </a:lnSpc>
+              <a:buNone/>
+            </a:pPr>
+            <a:r>
+              <a:rPr lang="en-US" sz="1700" dirty="0">
+                <a:solidFill>
+                  <a:srgbClr val="D6E8FF"/>
+                </a:solidFill>
+                <a:latin typeface="맑은 고딕" pitchFamily="34" charset="0"/>
+                <a:ea typeface="맑은 고딕" pitchFamily="34" charset="-122"/>
+                <a:cs typeface="맑은 고딕" pitchFamily="34" charset="-120"/>
+              </a:rPr>
+              <a:t xml:space="preserve">GPS 기반 공중화장실 </a:t>
+            </a:r>
+            <a:r>
+              <a:rPr lang="en-US" sz="1700" dirty="0" err="1">
+                <a:solidFill>
+                  <a:srgbClr val="D6E8FF"/>
+                </a:solidFill>
+                <a:latin typeface="맑은 고딕" pitchFamily="34" charset="0"/>
+                <a:ea typeface="맑은 고딕" pitchFamily="34" charset="-122"/>
+                <a:cs typeface="맑은 고딕" pitchFamily="34" charset="-120"/>
+              </a:rPr>
+              <a:t>탐색</a:t>
+            </a:r>
+            <a:r>
+              <a:rPr lang="en-US" sz="1700" dirty="0">
+                <a:solidFill>
+                  <a:srgbClr val="D6E8FF"/>
+                </a:solidFill>
+                <a:latin typeface="맑은 고딕" pitchFamily="34" charset="0"/>
+                <a:ea typeface="맑은 고딕" pitchFamily="34" charset="-122"/>
+                <a:cs typeface="맑은 고딕" pitchFamily="34" charset="-120"/>
+              </a:rPr>
+              <a:t xml:space="preserve"> </a:t>
+            </a:r>
+            <a:r>
+              <a:rPr lang="en-US" sz="1700" dirty="0" err="1">
+                <a:solidFill>
+                  <a:srgbClr val="D6E8FF"/>
+                </a:solidFill>
+                <a:latin typeface="맑은 고딕" pitchFamily="34" charset="0"/>
+                <a:ea typeface="맑은 고딕" pitchFamily="34" charset="-122"/>
+                <a:cs typeface="맑은 고딕" pitchFamily="34" charset="-120"/>
+              </a:rPr>
+              <a:t>웹</a:t>
+            </a:r>
+            <a:r>
+              <a:rPr lang="ko-KR" altLang="en-US" sz="1700" dirty="0">
+                <a:solidFill>
+                  <a:srgbClr val="D6E8FF"/>
+                </a:solidFill>
+                <a:latin typeface="맑은 고딕" pitchFamily="34" charset="0"/>
+                <a:ea typeface="맑은 고딕" pitchFamily="34" charset="-122"/>
+                <a:cs typeface="맑은 고딕" pitchFamily="34" charset="-120"/>
+              </a:rPr>
+              <a:t xml:space="preserve"> </a:t>
+            </a:r>
+            <a:r>
+              <a:rPr lang="en-US" sz="1700" dirty="0" err="1">
+                <a:solidFill>
+                  <a:srgbClr val="D6E8FF"/>
+                </a:solidFill>
+                <a:latin typeface="맑은 고딕" pitchFamily="34" charset="0"/>
+                <a:ea typeface="맑은 고딕" pitchFamily="34" charset="-122"/>
+                <a:cs typeface="맑은 고딕" pitchFamily="34" charset="-120"/>
+              </a:rPr>
+              <a:t>앱</a:t>
+            </a:r>
+            <a:r>
+              <a:rPr lang="en-US" sz="1700" dirty="0">
+                <a:solidFill>
+                  <a:srgbClr val="D6E8FF"/>
+                </a:solidFill>
+                <a:latin typeface="맑은 고딕" pitchFamily="34" charset="0"/>
+                <a:ea typeface="맑은 고딕" pitchFamily="34" charset="-122"/>
+                <a:cs typeface="맑은 고딕" pitchFamily="34" charset="-120"/>
+              </a:rPr>
+              <a:t xml:space="preserve"> </a:t>
+            </a:r>
+          </a:p>
+          <a:p>
+            <a:pPr marL="0" indent="0">
+              <a:lnSpc>
+                <a:spcPct val="130000"/>
+              </a:lnSpc>
+              <a:buNone/>
+            </a:pPr>
+            <a:r>
+              <a:rPr lang="en-US" sz="1700" dirty="0">
+                <a:solidFill>
+                  <a:srgbClr val="D6E8FF"/>
+                </a:solidFill>
+                <a:latin typeface="맑은 고딕" pitchFamily="34" charset="0"/>
+                <a:ea typeface="맑은 고딕" pitchFamily="34" charset="-122"/>
+                <a:cs typeface="맑은 고딕" pitchFamily="34" charset="-120"/>
+              </a:rPr>
+              <a:t xml:space="preserve">— 단일 HTML </a:t>
+            </a:r>
+            <a:r>
+              <a:rPr lang="en-US" sz="1700" dirty="0" err="1">
+                <a:solidFill>
+                  <a:srgbClr val="D6E8FF"/>
+                </a:solidFill>
+                <a:latin typeface="맑은 고딕" pitchFamily="34" charset="0"/>
+                <a:ea typeface="맑은 고딕" pitchFamily="34" charset="-122"/>
+                <a:cs typeface="맑은 고딕" pitchFamily="34" charset="-120"/>
+              </a:rPr>
+              <a:t>파일로</a:t>
+            </a:r>
+            <a:r>
+              <a:rPr lang="en-US" sz="1700" dirty="0">
+                <a:solidFill>
+                  <a:srgbClr val="D6E8FF"/>
+                </a:solidFill>
+                <a:latin typeface="맑은 고딕" pitchFamily="34" charset="0"/>
+                <a:ea typeface="맑은 고딕" pitchFamily="34" charset="-122"/>
+                <a:cs typeface="맑은 고딕" pitchFamily="34" charset="-120"/>
+              </a:rPr>
+              <a:t xml:space="preserve"> </a:t>
+            </a:r>
+            <a:r>
+              <a:rPr lang="en-US" sz="1700" dirty="0" err="1">
+                <a:solidFill>
+                  <a:srgbClr val="D6E8FF"/>
+                </a:solidFill>
+                <a:latin typeface="맑은 고딕" pitchFamily="34" charset="0"/>
+                <a:ea typeface="맑은 고딕" pitchFamily="34" charset="-122"/>
+                <a:cs typeface="맑은 고딕" pitchFamily="34" charset="-120"/>
+              </a:rPr>
+              <a:t>동작하는</a:t>
+            </a:r>
+            <a:r>
+              <a:rPr lang="ko-KR" altLang="en-US" sz="1700" dirty="0"/>
+              <a:t xml:space="preserve"> </a:t>
+            </a:r>
+            <a:r>
+              <a:rPr lang="en-US" sz="1700" dirty="0" err="1">
+                <a:solidFill>
+                  <a:srgbClr val="D6E8FF"/>
+                </a:solidFill>
+                <a:latin typeface="맑은 고딕" pitchFamily="34" charset="0"/>
+                <a:ea typeface="맑은 고딕" pitchFamily="34" charset="-122"/>
+                <a:cs typeface="맑은 고딕" pitchFamily="34" charset="-120"/>
+              </a:rPr>
+              <a:t>지도·필터·리뷰·코인</a:t>
+            </a:r>
+            <a:r>
+              <a:rPr lang="en-US" sz="1700" dirty="0">
+                <a:solidFill>
+                  <a:srgbClr val="D6E8FF"/>
+                </a:solidFill>
+                <a:latin typeface="맑은 고딕" pitchFamily="34" charset="0"/>
+                <a:ea typeface="맑은 고딕" pitchFamily="34" charset="-122"/>
+                <a:cs typeface="맑은 고딕" pitchFamily="34" charset="-120"/>
+              </a:rPr>
+              <a:t xml:space="preserve"> 시스템의 코드 구조와 작동 원리</a:t>
+            </a:r>
+            <a:endParaRPr lang="en-US" sz="1700" dirty="0"/>
+          </a:p>
+        </p:txBody>
+      </p:sp>
+      <p:sp>
+        <p:nvSpPr>
+          <p:cNvPr id="7" name="Shape 5"/>
+          <p:cNvSpPr/>
+          <p:nvPr/>
+        </p:nvSpPr>
+        <p:spPr>
+          <a:xfrm>
+            <a:off x="822960" y="5532120"/>
+            <a:ext cx="566928" cy="566928"/>
+          </a:xfrm>
+          <a:prstGeom prst="ellipse">
+            <a:avLst/>
+          </a:prstGeom>
+          <a:solidFill>
+            <a:srgbClr val="2979FF"/>
+          </a:solidFill>
+          <a:ln w="38100">
+            <a:solidFill>
+              <a:srgbClr val="FFFFFF"/>
+            </a:solidFill>
+            <a:prstDash val="solid"/>
+          </a:ln>
+        </p:spPr>
+        <p:txBody>
+          <a:bodyPr/>
+          <a:lstStyle/>
+          <a:p>
+            <a:endParaRPr lang="ko-KR" altLang="en-US"/>
+          </a:p>
+        </p:txBody>
+      </p:sp>
+      <p:sp>
+        <p:nvSpPr>
+          <p:cNvPr id="8" name="Text 6"/>
+          <p:cNvSpPr/>
+          <p:nvPr/>
+        </p:nvSpPr>
+        <p:spPr>
+          <a:xfrm>
+            <a:off x="822960" y="5532120"/>
+            <a:ext cx="566928" cy="566928"/>
+          </a:xfrm>
+          <a:prstGeom prst="rect">
+            <a:avLst/>
+          </a:prstGeom>
+          <a:noFill/>
+          <a:ln/>
+        </p:spPr>
+        <p:txBody>
+          <a:bodyPr wrap="square" rtlCol="0" anchor="ctr"/>
+          <a:lstStyle/>
+          <a:p>
+            <a:pPr marL="0" indent="0" algn="ctr">
+              <a:buNone/>
+            </a:pPr>
+            <a:r>
+              <a:rPr lang="en-US" sz="1736" dirty="0">
+                <a:solidFill>
+                  <a:srgbClr val="000000"/>
+                </a:solidFill>
+                <a:latin typeface="맑은 고딕" pitchFamily="34" charset="0"/>
+                <a:ea typeface="맑은 고딕" pitchFamily="34" charset="-122"/>
+                <a:cs typeface="맑은 고딕" pitchFamily="34" charset="-120"/>
+              </a:rPr>
+              <a:t>🚻</a:t>
+            </a:r>
+            <a:endParaRPr lang="en-US" sz="1736" dirty="0"/>
+          </a:p>
+        </p:txBody>
+      </p:sp>
+      <p:sp>
+        <p:nvSpPr>
+          <p:cNvPr id="9" name="Shape 7"/>
+          <p:cNvSpPr/>
+          <p:nvPr/>
+        </p:nvSpPr>
+        <p:spPr>
+          <a:xfrm>
+            <a:off x="1600200" y="5532120"/>
+            <a:ext cx="566928" cy="566928"/>
+          </a:xfrm>
+          <a:prstGeom prst="ellipse">
+            <a:avLst/>
+          </a:prstGeom>
+          <a:solidFill>
+            <a:srgbClr val="FFC107"/>
+          </a:solidFill>
+          <a:ln w="38100">
+            <a:solidFill>
+              <a:srgbClr val="FFFFFF"/>
+            </a:solidFill>
+            <a:prstDash val="solid"/>
+          </a:ln>
+        </p:spPr>
+        <p:txBody>
+          <a:bodyPr/>
+          <a:lstStyle/>
+          <a:p>
+            <a:endParaRPr lang="ko-KR" altLang="en-US"/>
+          </a:p>
+        </p:txBody>
+      </p:sp>
+      <p:sp>
+        <p:nvSpPr>
+          <p:cNvPr id="10" name="Text 8"/>
+          <p:cNvSpPr/>
+          <p:nvPr/>
+        </p:nvSpPr>
+        <p:spPr>
+          <a:xfrm>
+            <a:off x="1600200" y="5532120"/>
+            <a:ext cx="566928" cy="566928"/>
+          </a:xfrm>
+          <a:prstGeom prst="rect">
+            <a:avLst/>
+          </a:prstGeom>
+          <a:noFill/>
+          <a:ln/>
+        </p:spPr>
+        <p:txBody>
+          <a:bodyPr wrap="square" rtlCol="0" anchor="ctr"/>
+          <a:lstStyle/>
+          <a:p>
+            <a:pPr marL="0" indent="0" algn="ctr">
+              <a:buNone/>
+            </a:pPr>
+            <a:r>
+              <a:rPr lang="en-US" sz="1736" dirty="0">
+                <a:solidFill>
+                  <a:srgbClr val="000000"/>
+                </a:solidFill>
+                <a:latin typeface="맑은 고딕" pitchFamily="34" charset="0"/>
+                <a:ea typeface="맑은 고딕" pitchFamily="34" charset="-122"/>
+                <a:cs typeface="맑은 고딕" pitchFamily="34" charset="-120"/>
+              </a:rPr>
+              <a:t>🔒</a:t>
+            </a:r>
+            <a:endParaRPr lang="en-US" sz="1736" dirty="0"/>
+          </a:p>
+        </p:txBody>
+      </p:sp>
+      <p:sp>
+        <p:nvSpPr>
+          <p:cNvPr id="11" name="Shape 9"/>
+          <p:cNvSpPr/>
+          <p:nvPr/>
+        </p:nvSpPr>
+        <p:spPr>
+          <a:xfrm>
+            <a:off x="2377440" y="5532120"/>
+            <a:ext cx="566928" cy="566928"/>
+          </a:xfrm>
+          <a:prstGeom prst="ellipse">
+            <a:avLst/>
+          </a:prstGeom>
+          <a:solidFill>
+            <a:srgbClr val="34C759"/>
+          </a:solidFill>
+          <a:ln w="38100">
+            <a:solidFill>
+              <a:srgbClr val="FFFFFF"/>
+            </a:solidFill>
+            <a:prstDash val="solid"/>
+          </a:ln>
+        </p:spPr>
+        <p:txBody>
+          <a:bodyPr/>
+          <a:lstStyle/>
+          <a:p>
+            <a:endParaRPr lang="ko-KR" altLang="en-US"/>
+          </a:p>
+        </p:txBody>
+      </p:sp>
+      <p:sp>
+        <p:nvSpPr>
+          <p:cNvPr id="12" name="Text 10"/>
+          <p:cNvSpPr/>
+          <p:nvPr/>
+        </p:nvSpPr>
+        <p:spPr>
+          <a:xfrm>
+            <a:off x="2377440" y="5532120"/>
+            <a:ext cx="566928" cy="566928"/>
+          </a:xfrm>
+          <a:prstGeom prst="rect">
+            <a:avLst/>
+          </a:prstGeom>
+          <a:noFill/>
+          <a:ln/>
+        </p:spPr>
+        <p:txBody>
+          <a:bodyPr wrap="square" rtlCol="0" anchor="ctr"/>
+          <a:lstStyle/>
+          <a:p>
+            <a:pPr marL="0" indent="0" algn="ctr">
+              <a:buNone/>
+            </a:pPr>
+            <a:r>
+              <a:rPr lang="en-US" sz="1736" dirty="0">
+                <a:solidFill>
+                  <a:srgbClr val="000000"/>
+                </a:solidFill>
+                <a:latin typeface="맑은 고딕" pitchFamily="34" charset="0"/>
+                <a:ea typeface="맑은 고딕" pitchFamily="34" charset="-122"/>
+                <a:cs typeface="맑은 고딕" pitchFamily="34" charset="-120"/>
+              </a:rPr>
+              <a:t>🏪</a:t>
+            </a:r>
+            <a:endParaRPr lang="en-US" sz="1736" dirty="0"/>
+          </a:p>
+        </p:txBody>
+      </p:sp>
+      <p:sp>
+        <p:nvSpPr>
+          <p:cNvPr id="13" name="Text 11"/>
+          <p:cNvSpPr/>
+          <p:nvPr/>
+        </p:nvSpPr>
+        <p:spPr>
+          <a:xfrm>
+            <a:off x="3154680" y="5650992"/>
+            <a:ext cx="5486400" cy="457200"/>
+          </a:xfrm>
+          <a:prstGeom prst="rect">
+            <a:avLst/>
+          </a:prstGeom>
+          <a:noFill/>
+          <a:ln/>
+        </p:spPr>
+        <p:txBody>
+          <a:bodyPr wrap="square" lIns="0" tIns="0" rIns="0" bIns="0" rtlCol="0" anchor="ctr"/>
+          <a:lstStyle/>
+          <a:p>
+            <a:pPr marL="0" indent="0">
+              <a:buNone/>
+            </a:pPr>
+            <a:r>
+              <a:rPr lang="ko-KR" altLang="en-US" sz="1300" i="1" dirty="0">
+                <a:solidFill>
+                  <a:srgbClr val="D6E8FF"/>
+                </a:solidFill>
+                <a:latin typeface="맑은 고딕" pitchFamily="34" charset="0"/>
+                <a:ea typeface="맑은 고딕" pitchFamily="34" charset="-122"/>
+              </a:rPr>
+              <a:t>김태윤</a:t>
+            </a:r>
+            <a:r>
+              <a:rPr lang="en-US" altLang="ko-KR" sz="1300" i="1" dirty="0">
+                <a:solidFill>
+                  <a:srgbClr val="D6E8FF"/>
+                </a:solidFill>
+                <a:latin typeface="맑은 고딕" pitchFamily="34" charset="0"/>
+                <a:ea typeface="맑은 고딕" pitchFamily="34" charset="-122"/>
+              </a:rPr>
+              <a:t xml:space="preserve">, </a:t>
+            </a:r>
+            <a:r>
+              <a:rPr lang="ko-KR" altLang="en-US" sz="1300" i="1" dirty="0">
+                <a:solidFill>
+                  <a:srgbClr val="D6E8FF"/>
+                </a:solidFill>
+                <a:latin typeface="맑은 고딕" pitchFamily="34" charset="0"/>
+                <a:ea typeface="맑은 고딕" pitchFamily="34" charset="-122"/>
+              </a:rPr>
+              <a:t>이수현</a:t>
+            </a:r>
+            <a:r>
+              <a:rPr lang="en-US" altLang="ko-KR" sz="1300" i="1" dirty="0">
+                <a:solidFill>
+                  <a:srgbClr val="D6E8FF"/>
+                </a:solidFill>
+                <a:latin typeface="맑은 고딕" pitchFamily="34" charset="0"/>
+                <a:ea typeface="맑은 고딕" pitchFamily="34" charset="-122"/>
+              </a:rPr>
+              <a:t xml:space="preserve">, </a:t>
+            </a:r>
+            <a:r>
+              <a:rPr lang="ko-KR" altLang="en-US" sz="1300" i="1">
+                <a:solidFill>
+                  <a:srgbClr val="D6E8FF"/>
+                </a:solidFill>
+                <a:latin typeface="맑은 고딕" pitchFamily="34" charset="0"/>
+                <a:ea typeface="맑은 고딕" pitchFamily="34" charset="-122"/>
+              </a:rPr>
+              <a:t>김예진</a:t>
+            </a:r>
+            <a:endParaRPr lang="en-US" sz="1300" dirty="0"/>
+          </a:p>
+        </p:txBody>
+      </p:sp>
+    </p:spTree>
+  </p:cSld>
+  <p:clrMapOvr>
+    <a:masterClrMapping/>
+  </p:clrMapOvr>
+</p:sld>

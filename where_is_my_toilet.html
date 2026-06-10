@@ -761,6 +761,27 @@ const SAMPLE_REVIEWS = {
     {stars:2,text:"공원 내 화장실이라 그런지 여름엔 냄새가 좀 나요. 급하면 쓸 수 있지만 기대는 하지 마세요.",photo:null,date:"2025.05.05",nick:"예민한 탐험가",avatar:"🦝"},
     {stars:4,text:"아침 일찍엔 꽤 깨끗해요. 공원 산책할 때 사용하기 좋습니다.",photo:null,date:"2025.04.10",nick:"소심한 방랑자",avatar:"🦊"},
   ],
+  // 세종대·어린이대공원 부근 — 별점 평균 맞춤
+  "70": [
+    {stars:5,text:"어린이대공원 정문 바로 옆이라 접근성이 최고예요! 아이들과 함께 왔을 때 넓고 깨끗해서 불편함 없었습니다.",photo:null,date:"2026.05.18",nick:"꼼꼼한 탐험가",avatar:"🐼"},
+    {stars:4,text:"주말에 사람이 좀 많긴 한데 청결하게 유지되고 있어요. 정문 옆이라 위치가 정말 좋습니다.",photo:null,date:"2026.05.25",nick:"여유로운 도시인",avatar:"🦊"},
+    {stars:4,text:"화장지도 잘 구비되어 있고 시설이 깔끔해요. 공원 입장 전 꼭 들르게 되는 곳이에요.",photo:null,date:"2026.06.01",nick:"대담한 여행자",avatar:"🐱"},
+  ],
+  "72": [
+    {stars:4,text:"지하철역 내부라 24시간 이용 가능하고 찾기 쉬워요. 관리 상태도 괜찮은 편입니다.",photo:null,date:"2026.05.20",nick:"깔끔한 방랑자",avatar:"🦄"},
+    {stars:3,text:"역 규모에 비해 칸 수가 좀 적어요. 출퇴근 시간엔 줄 서야 할 수도 있어서 아쉬워요.",photo:null,date:"2026.05.28",nick:"예민한 산책러",avatar:"🐨"},
+    {stars:4,text:"급할 때 바로 찾을 수 있어서 좋습니다. 청결도도 보통 이상이에요.",photo:null,date:"2026.06.03",nick:"소심한 나그네",avatar:"🐶"},
+  ],
+  "78": [
+    {stars:4,text:"세종대 앞이라 학생들이 자주 이용해서 관리가 잘 되는 편이에요. 위치도 찾기 쉽습니다.",photo:null,date:"2026.05.15",nick:"용감한 탐험가",avatar:"🐯"},
+    {stars:3,text:"외부 공중화장실치고는 괜찮은데 가끔 청결 상태가 들쭉날쭉해요. 급할 땐 유용합니다.",photo:null,date:"2026.05.22",nick:"급한 도시인",avatar:"🦝"},
+    {stars:4,text:"캠퍼스 근처라 비교적 깔끔하게 유지돼 있어요. 세종대 방문 시 추천합니다.",photo:null,date:"2026.06.05",nick:"꼼꼼한 여행자",avatar:"🐸"},
+  ],
+  "80": [
+    {stars:5,text:"학생회관 내부라 시설이 정말 좋아요! 비데도 있고 넓어서 쾌적합니다. 비밀번호는 코인으로 확인하세요!",photo:null,date:"2026.05.10",nick:"깔끔한 산책러",avatar:"🦊"},
+    {stars:4,text:"세종대 재학생인데 3층 화장실 청결 상태 정말 좋아요. 비데까지 있어서 만족스럽습니다.",photo:null,date:"2026.05.19",nick:"대담한 나그네",avatar:"🐺"},
+    {stars:4,text:"학교 건물 내부라 관리가 잘 돼 있어요. 방문객도 코인으로 비밀번호 확인하면 이용 가능해요!",photo:null,date:"2026.06.02",nick:"여유로운 방랑자",avatar:"🦁"},
+  ],
 };
 
 // ─── STATE ──────────────────────────────────────────────────
@@ -969,9 +990,15 @@ function openSheet(t) {
 
   // rating (merge user reviews)
   const rData = computeRating(t);
-  document.getElementById('sh-stars').textContent = stars(rData.avg);
-  document.getElementById('sh-rating').textContent = rData.avg.toFixed(1);
-  document.getElementById('sh-rcnt').textContent = `(리뷰 ${rData.cnt}개)`;
+  if(rData.cnt === 0){
+    document.getElementById('sh-stars').textContent = '';
+    document.getElementById('sh-rating').textContent = '';
+    document.getElementById('sh-rcnt').textContent = '아직 리뷰가 없어요';
+  } else {
+    document.getElementById('sh-stars').textContent = stars(rData.avg);
+    document.getElementById('sh-rating').textContent = rData.avg.toFixed(1);
+    document.getElementById('sh-rcnt').textContent = `(리뷰 ${rData.cnt}개)`;
+  }
   const visibleRevCnt = (reviewsDB[String(t.id)]||[]).length;
   document.getElementById('rev-tab-cnt').textContent = visibleRevCnt>0?`(${visibleRevCnt})`:'';
 
